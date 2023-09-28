@@ -1,0 +1,21 @@
+{
+  "name": "serverapi",
+  "version": "1.0.0",
+  "description": "ServerAPI for artlas",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/main.js"
+  },
+  "author": "Aurélien Bon",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.3.8",
+    "chai-http": "^4.4.0",
+    "eslint": "^8.50.0",
+    "eslint-plugin-mocha": "^10.2.0",
+    "mocha": "^10.2.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
