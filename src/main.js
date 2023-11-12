@@ -1,20 +1,17 @@
 const express = require('express')
-// const userRouter = require('./routes/user')
 const bodyParser = require('body-parser')
 const apiUp = require('./routes/apiup')
+//const userRouter = require('./routes/user')
 
 const app = express()
 const port = process.env.PORT || 3000
 
-app.use(bodyParser.urlencoded({
-  extended: false
-}))
+app.use(express.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-app.get('/', (req, res) => res.send('Hello World!'))
-app.use('/apiup',apiUp)
-
-// app.use('/user', userRouter)
+app.get('/',apiUp)
+//app.use('/user', userRouter)
 
 const server = app.listen(port, (err) => {
   if (err) throw err
