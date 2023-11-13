@@ -16,7 +16,7 @@ ENV MARIADBPSW "aurelebg"
 ENV MARIADBDATABASE "bdd_test"
 ENV MONGODBURL "mongodb://mongodb.ahddry.fr:27017/"
 
-ENV PORT 3000
+ENV PORT 1234
 
 ENV HOSTNAME "0.0.0.0"
 
