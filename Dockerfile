@@ -10,11 +10,11 @@ COPY . .
 
 EXPOSE 3000
 
-ENV MARIADBHOST "ahddry.fr:3306"
+ENV MARIADBHOST "localhost"
 ENV MARIADBUSER "adri"
 ENV MARIADBPSW "aurelebg"
-ENV MARIADBDATABASE "bdd_test"
-ENV MONGODBURL "mongodb://mongodb.ahddry.fr:27017/"
+ENV MARIADBDATABASE "artlas"
+ENV MONGODBURL "mongodb://localhost:27017/"
 
 ENV PORT 3000
 
