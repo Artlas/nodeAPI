@@ -1,34 +1,24 @@
 const express = require('express')
 const mariadb = require('../mariadb')
+const mongodb = require('../mongodb')
 
 const user = express.Router()
 
 user.get('/token',(req,resp)=>{
     async function run(){
-        let sql="SELECT * FROM users WHERE mail=?"
-        let values=[req.body.mail]
         try {
-            let result = await mariadb.query(sql,values)
-            if(result.length==0){
-                resp.status(404).json({error: "User not found"})
+            let user = await mongodb.checkUser(req.body.mail,req.body.password)
+            if(user){
+                console.log(user)
+                let token = await mongodb.getTokenForUser(req.body.mail)
+                resp.status(200).json({'token':token[0].token,'expireTime':token[0].expireTime})
             }
             else{
-                if(result[0].password==req.body.password){
-                    try{
-                        let token = await mariadb.getTocken(result[0].id)
-                        resp.status(200).json({'token':token[0].token,'expireTime':token[0].expireTime})
-                    }catch(error){
-                        console.error(error)
-                        resp.status(500).json({error})
-                    }
-                }
-                else{
-                    resp.status(401).json({error: "Wrong password"})
-                }
+                resp.status(401).json(user)
             }
         }catch (error) {
-        console.error(error)
-        resp.status(500).json({error})
+            //console.error(error)
+            resp.status(500).json({error})
         }
     }
     if(req.body.mail!=null && req.body.password!=null){

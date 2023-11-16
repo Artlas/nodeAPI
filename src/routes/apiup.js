@@ -20,15 +20,15 @@ apiUp.get('/',(req,resp)=>{
             respObj.mongodb = false
             console.error(error)
         }
-        try {
-            await mariadb.checkConnection()
-            respObj.status = true
-            respObj.mariadb = true
-        } catch (error) {
-            respObj.status = true
-            respObj.mariadb = false
-            console.error(error)
-        }
+        // try {
+        //     await mariadb.checkConnection()
+        //     respObj.status = true
+        //     respObj.mariadb = true
+        // } catch (error) {
+        //     respObj.status = true
+        //     respObj.mariadb = false
+        //     console.error(error)
+        // }
         resp.status(201).json(respObj)
     }
     run()

@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const apiUp = require('./routes/apiup')
 const userRouter = require('./routes/user')
+const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -10,6 +11,7 @@ app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
+app.use(jwtCheck)
 app.get('/',apiUp)
 app.use('/user', userRouter)
 
