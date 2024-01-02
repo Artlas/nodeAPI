@@ -1,7 +1,7 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
-const url = process.env.MONGODBURL ||  "mongodb://mongodb.ahddry.fr:27017/";
-// const url = process.env.MONGODBURL ||  "mongodb://localhost:27017/";
+// const url = process.env.MONGODBURL ||  "mongodb://mongodb.ahddry.fr:27017/";
+const url = process.env.MONGODBURL ||  "mongodb://localhost:27017/";
 const bdd = 'Artlas'
 
 const client = new MongoClient(url, {
