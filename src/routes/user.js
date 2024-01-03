@@ -4,12 +4,22 @@ const jwt = require('../auth/jwt')
 const user = express.Router()
 
 user.get('/connect',async(req,resp)=>{
-    if(req.body.mail!=null && req.body.password!=null){
+    if((req.body.mail!=null || req.body.id!=null) && req.body.password!=null){
         try{
-            let user = await mongodb.checkUser(req.body.mail,req.body.password)
+            let user = await mongodb.checkUser(req.body.mail,req.body.id,req.body.password)
             if(user.mail!=null){
-                let token = jwt.createToken({'userdata':{'mail':user.mail,'permission':user.permission}})
-                resp.status(201).json({'token':token})
+                let token = jwt.createToken({'userdata':{'id':user.id,'permission':user.permission}})
+                resp.status(201).json(
+                    {'user':{
+                        'token':token,
+                        'id':user.id,
+                        'mail':user.mail,
+                        'firstName':user.firstName,
+                        'lastName':user.lastName,
+                        'birthdate':user.birthdate,
+                        'address':user.address,
+                        'permission':user.permission
+                    }})
             } else {
                 resp.status(401).json(user)
             }
@@ -23,9 +33,9 @@ user.get('/connect',async(req,resp)=>{
     }
 })
 user.post('/add',async(req,resp)=>{
-    if(req.body.mail!=null && req.body.password!=null && req.body.firstName!=null && req.body.lastName!=null){
+    if(req.body.id!=null && req.body.mail!=null && req.body.password!=null && req.body.firstName!=null && req.body.lastName!=null && req.body.birthdate!=null && req.body.address!=null){
         try{
-            let user = await mongodb.createUser(req.body.mail, req.body.password, req.body.firstName, req.body.lastName)
+            let user = await mongodb.createUser(req.body.id, req.body.mail, req.body.password, req.body.firstName, req.body.lastName, req.body.birthdate, req.body.address)
             if(user){
                 resp.status(201).json(user)
             }
@@ -39,49 +49,49 @@ user.post('/add',async(req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
-user.put('/update',async(rep,res)=>{
-    if(rep.body.mail!=null && rep.body.password!=null && rep.body.firstName!=null && rep.body.lastName!=null && rep.headers.token!=null){
+user.put('/update',async(req,resp)=>{
+    if(req.body.id!=null && req.body.mail!=null && req.body.password!=null && req.body.firstName!=null && req.body.lastName!=null && req.body.birthdate!=null && req.body.address!=null){
         try {
-            let value = jwt.getToken(rep.headers.token)
-            if(value.userdata.permission == 'admin' || value.userdata.mail==rep.body.mail){
-                let user = await mongodb.updateUser(rep.body.mail, rep.body.password, rep.body.firstName, rep.body.lastName,value.userdata.permission)
+            let value = jwt.getToken(req.headers.token)
+            if(value.userdata.permission == 'admin' || value.userdata.id==req.body.id){
+                let user = await mongodb.updateUser(req.body.id, req.body.mail, req.body.password, req.body.firstName, req.body.lastName, req.body.birthdate, req.body.address, value.userdata.permission)
                 if(user){
-                    res.status(201).json(user)
+                    resp.status(201).json(user)
                 }
                 else{
-                    res.status(401).json(user)
+                    resp.status(401).json(user)
                 }
             } else {
-                res.status(401).json({error: "Unauthorized"})
+                resp.status(401).json({error: "Unauthorized"})
             }
         } catch (error) {
             console.log(error)
-            res.status(500).json({error})
+            resp.status(500).json({error})
         }
     }else{
-        res.status(400).json({error: "Bad request"})
+        resp.status(400).json({error: "Bad request"})
     }
 })
-user.delete('/delete',async(rep,res)=>{
-    if(rep.body.mail!=null && rep.body.password!=null && rep.headers.token!=null){
+user.delete('/delete',async(req,resp)=>{
+    if((req.body.mail!=null || req.body.id!=null) && req.body.password!=null && req.headers.token!=null){
         try {
-            let value = jwt.getToken(rep.headers.token)
+            let value = jwt.getToken(req.headers.token)
             if(value.userdata.permission == 'admin'){
-                let user = await mongodb.deleteUser(rep.body.mail, rep.body.password)
+                let user = await mongodb.deleteUser(req.body.mail, req.body.password)
                 if(user){
-                    res.status(201).json(user)
+                    resp.status(201).json(user)
                 }
                 else{
-                    res.status(401).json(user)
+                    resp.status(401).json(user)
                 }
             } else {
-                res.status(401).json({error: "Unauthorized"})
+                resp.status(401).json({error: "Unauthorized"})
             }
         } catch (error) {
-            res.status(500).json({error})
+            resp.status(500).json({error})
         }
     }else{
-        res.status(400).json({error: "Bad request"})
+        resp.status(400).json({error: "Bad request"})
     }
 })
 
