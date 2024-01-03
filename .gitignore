@@ -6,3 +6,4 @@
 !.eslintrc.json
 .env*.local
 *.key
+service_account_deploy.json
