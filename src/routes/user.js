@@ -1,5 +1,5 @@
 const express = require('express')
-const mongodb = require('../mongodb')
+const mongodb = require('../Database/userDB')
 const jwt = require('../auth/jwt')
 const user = express.Router()
 

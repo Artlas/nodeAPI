@@ -1,5 +1,5 @@
 const express = require('express')
-const mongodb = require('../mongodb')
+const mongodb = require('../Database/mongodb')
 const mariadb = require('../mariadb')
 
 const apiUp = express.Router()
@@ -8,8 +8,7 @@ apiUp.get('/',(req,resp)=>{
     async function run(){
         let respObj = {
             status: false,
-            mongodb: false,
-            mariadb: false
+            mongodb: false
         }
         try {
             await mongodb.checkConnection()
@@ -20,15 +19,6 @@ apiUp.get('/',(req,resp)=>{
             respObj.mongodb = false
             console.error(error)
         }
-        // try {
-        //     await mariadb.checkConnection()
-        //     respObj.status = true
-        //     respObj.mariadb = true
-        // } catch (error) {
-        //     respObj.status = true
-        //     respObj.mariadb = false
-        //     console.error(error)
-        // }
         resp.status(201).json(respObj)
     }
     run()
