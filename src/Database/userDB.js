@@ -1,6 +1,5 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
-// const url = process.env.MONGODBURL ||  "mongodb://mongodb.ahddry.fr:27017/";
 const url = process.env.MONGODBURL ||  "mongodb://localhost:27017/";
 const bdd = 'Artlas'
 
@@ -11,19 +10,6 @@ const client = new MongoClient(url, {
         deprecationErrors: true,
     }
 });
-
-async function checkConnection() {
-    try {
-        await client.connect();
-        await client.db('admin').command({ping:1});
-        return true;
-    } catch (err) {
-        throw err;
-    } finally {
-        if (client) client.close()
-    }
-}
-
 
 async function checkUser(email, password) {
     try {
@@ -127,9 +113,7 @@ async function deleteUser(mail,password){
 
 
 }
-
 module.exports = {
-    checkConnection,
     checkUser,
     createUser,
     updateUser,
