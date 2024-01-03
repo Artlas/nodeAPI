@@ -11,11 +11,16 @@ const client = new MongoClient(url, {
     }
 });
 
-async function checkUser(email, password) {
+async function checkUser(email, id, password) {
     try {
         await client.connect();
         const db = client.db(bdd);
-        let query = {'mail': email}
+        let query
+        if(id!=null){
+            query = {'id':id}
+        }else{
+            query = {'mail': email}
+        }
         const collection = db.collection('User');
         let user = await collection.findOne(query)
         if (user==null) {
@@ -35,26 +40,35 @@ async function checkUser(email, password) {
     }
 }
 
-async function createUser(mail, password, firstName, lastName) {
+async function createUser(id, mail, password, firstName, lastName, birthdate, address) {
     try {
         await client.connect()
         const db = client.db(bdd)
         const collection = db.collection('User')
         let query = {'mail': mail}
-        const user = await collection.findOne(query)
+        let user = await collection.findOne(query)
         if (user!=null) {
-            return {'error':'User already exists'}
+            return {'error':'mail already used'}
         }else{
-            const newUser = {
-                mail: mail,
-                password: password,
-                firstName: firstName,
-                lastName: lastName,
-                permission: 'user'
+            query = {'id': id}
+            user = await collection.findOne(query)
+            if (user!=null) {
+                return {'error':'mail already used'}
+            }else{
+                const newUser = {
+                    id: id,
+                    mail: mail,
+                    password: password,
+                    firstName: firstName,
+                    lastName: lastName,
+                    birthdate: birthdate,
+                    address: address,
+                    permission: 'user'
+                }
+                console.log(newUser)
+                const result = await collection.insertOne(newUser);
+                return result;
             }
-            console.log(newUser)
-            const result = await collection.insertOne(newUser);
-            return result;
         }
     } catch (err) {
         return err;
@@ -63,21 +77,24 @@ async function createUser(mail, password, firstName, lastName) {
     }
 }
 
-async function updateUser(mail,password,firstName,lastName,permission){
+async function updateUser(id,mail,password,firstName,lastName,birthdate,address,permission){
     try {
         await client.connect();
         const db = client.db(bdd);
         const collection = db.collection('User');
-        let query = {'mail': mail}
+        let query = {'id':id,'mail': mail}
         const user = await collection.findOne(query);
         if (user==null) {
             return {'error':'User not found'};
         }else{
             const newUser = {
+                id: id,
                 mail: mail,
                 password: password,
                 firstName: firstName,
                 lastName: lastName,
+                birthdate: birthdate,
+                address: address,
                 permission: permission
             }
             const result = await collection.updateOne(query,{$set: newUser});
