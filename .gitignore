@@ -5,4 +5,4 @@
 !.eslintignore
 !.eslintrc.json
 .env*.local
-.key
+*.key
