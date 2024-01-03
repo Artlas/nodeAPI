@@ -10,7 +10,7 @@ headers = {
 }
 json = {
     'name': 'api',
-    'image': 'ghcr.io/space192/api',
+    'image': 'ghcr.io/artlas/api',
     'tag': 'latest'
 } 
 x = requests.post("https://docker.fournierfamily.ovh/to_reload",headers=headers, json=json, timeout=600)
