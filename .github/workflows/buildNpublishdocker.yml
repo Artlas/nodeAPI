@@ -55,9 +55,9 @@ jobs:
           echo ${{ secrets.EJSON_PRIVATE }} > /opt/ejson/keys/${{ secrets.EJSON_PUBLIC }}
           ./ejson decrypt service_account_deploy.ejson -o service_account_deploy.json
 
-      # - name: "Reload docker on server"
-      #   run: |
-      #     pip3 install google-auth
-      #     export IAP_CLIENT_ID=${{ secrets.IAP_CLIENT_ID }}
-      #     export GOOGLE_APPLICATION_CREDENTIALS=service_account_deploy.json
-      #     python3 reload_request.py ${{ env.docker }} ${{env.TAG }}
+      - name: "Reload docker on server"
+        run: |
+          pip3 install google-auth
+          export IAP_CLIENT_ID=${{ secrets.IAP_CLIENT_ID }}
+          export GOOGLE_APPLICATION_CREDENTIALS=service_account_deploy.json
+          python3 reload_request.py ${{ env.docker }} ${{env.TAG }}
