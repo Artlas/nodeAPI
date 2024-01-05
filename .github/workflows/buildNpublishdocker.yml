@@ -5,6 +5,8 @@ name: Build & publish docker
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
+  pull_request:
+    branches: ["main"]
   push:
     branches: ["main"]
 
@@ -20,6 +22,18 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v3
 
+      - name: Determine Tag
+        run: |
+          echo "TAG=staging" >> $GITHUB_ENV
+          echo "docker=api-staging" >> $GITHUB_ENV
+        if: github.event_name == 'pull_request'
+
+      - name: Determine Tag2
+        run: |
+          echo "TAG=prod" >> $GITHUB_ENV
+          echo "docker=api" >> $GITHUB_ENV
+        if: github.event_name != 'pull_request'
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -31,7 +45,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/artlas/api:latest
+          tags: ghcr.io/artlas/api:${{ env.TAG }}
+
       - name: install and decrypt ejson
         run: |
           wget https://github.com/Shopify/ejson/releases/download/v1.4.1/ejson_1.4.1_linux_amd64.tar.gz
@@ -40,9 +55,9 @@ jobs:
           echo ${{ secrets.EJSON_PRIVATE }} > /opt/ejson/keys/${{ secrets.EJSON_PUBLIC }}
           ./ejson decrypt service_account_deploy.ejson -o service_account_deploy.json
 
-      - name: "Reload docker on server"
-        run: |
-          pip3 install google-auth
-          export IAP_CLIENT_ID=${{ secrets.IAP_CLIENT_ID }}
-          export GOOGLE_APPLICATION_CREDENTIALS=service_account_deploy.json
-          python3 reload_request.py
+      # - name: "Reload docker on server"
+      #   run: |
+      #     pip3 install google-auth
+      #     export IAP_CLIENT_ID=${{ secrets.IAP_CLIENT_ID }}
+      #     export GOOGLE_APPLICATION_CREDENTIALS=service_account_deploy.json
+      #     python3 reload_request.py ${{ env.docker }} ${{env.TAG }}
