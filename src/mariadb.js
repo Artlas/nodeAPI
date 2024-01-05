@@ -22,7 +22,7 @@ async function query(sql, values) {
     }
 }
 
-async function getTocken(userId){
+async function getToken(userId){
     let conn;
     try {
         conn = await pool.getConnection();
@@ -73,6 +73,6 @@ async function checkToken(token){
 module.exports = {
     query,
     checkConnection,
-    getTocken,
+    getToken,
     checkToken
 };
