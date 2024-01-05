@@ -6,12 +6,18 @@ const jwt = require('./auth/jwt')
 const NodeRSA = require('node-rsa');
 const fs = require('fs')
 const app = express()
+const cors = require('cors');
 const port = process.env.PORT || 3000
 
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-
+app.use(cors({
+  origin: ['http://localhost:3000','https://staging.fournierfamily.ovh', 'https://fournierfamily.ovh'],
+  methods: 'GET,POST,PUT,DELETE',
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 app.get('/',apiUp)
 app.use('/user',userRouter)
 app.get('/authorized',function (req, res) {
