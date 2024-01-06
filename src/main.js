@@ -20,7 +20,7 @@ app.use(
     credentials: true,
   })
 );
-app.options("*", cors());
+app.options("/user/connect", cors());
 app.post(
   "/user/connect",
   function (req, res, next) {
