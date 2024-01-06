@@ -18,6 +18,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
+app.options('*',cors())
 app.get('/',apiUp)
 app.use('/user',userRouter)
 app.get('/authorized',function (req, res) {
