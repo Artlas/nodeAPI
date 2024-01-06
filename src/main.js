@@ -21,13 +21,14 @@ app.use(
   })
 );
 app.options("/user/connect", cors());
-app.post(
-  "/user/connect",
-  function (req, res, next) {
+// app.post(
+//   "/user/connect",
+//   function (req, res, next) {
  
-    res.json({ msg: "CORS enabled for /user/connect" });
-  }
-);
+//     res.json({ msg: "CORS enabled for /user/connect" });
+//     next.req
+//   }
+// );
 app.get("/", apiUp);
 app.use("/user", userRouter);
 app.get("/authorized", function (req, res) {
