@@ -19,6 +19,9 @@ app.use(cors({
   credentials: true
 }));
 app.options('*',cors())
+app.post('/user/connect', cors(), function(req,res,next){
+  res.json({msg: "CORS enabled for /user/connect"})
+})
 app.get('/',apiUp)
 app.use('/user',userRouter)
 app.get('/authorized',function (req, res) {
