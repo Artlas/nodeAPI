@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const apiUp = require('./routes/apiup')
 const userRouter = require('./routes/user')
+const oeuvreRouter = require('./routes/oeuvre')
 const jwt = require('./auth/jwt')
 const NodeRSA = require('node-rsa');
 const fs = require('fs')
@@ -20,6 +21,7 @@ app.use(cors({
 }));
 app.get('/',apiUp)
 app.use('/user',userRouter)
+app.use('/oeuvre',oeuvreRouter)
 app.get('/authorized',function (req, res) {
   try{
     let value = jwt.getToken(req.headers.token)
