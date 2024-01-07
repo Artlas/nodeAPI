@@ -107,6 +107,41 @@ async function updateUser(id,mail,password,firstName,lastName,birthdate,address,
     }
 
 }
+
+async function updatePassword(mail, password, newPassword){
+    try {
+        await client.connect();
+        const db = client.db(bdd);
+        const collection = db.collection('User');
+        let query = {'mail': mail}
+        const user = await collection.findOne(query);
+        if (user==null) {
+            return {'error':'User not found'};
+        }else{
+            if (user.password !== password) {
+                return {'error':'Password does not match'};
+            }else{
+                const newUser = {
+                    id: user.id,
+                    mail: mail,
+                    password: newPassword,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    birthdate: user.birthdate,
+                    address: user.address,
+                    permission: user.permission
+                }
+                const result = await collection.updateOne(query,{$set: newUser});
+                return result;
+            }
+        }
+    } catch (err) {
+        return err;
+    } finally {
+        if (client) client.close();
+    }
+}
+
 async function deleteUser(mail,password){
     try {
         await client.connect();
