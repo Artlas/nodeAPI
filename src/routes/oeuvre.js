@@ -7,7 +7,7 @@ oeuvre.post('/getId',async(req,resp)=>{
     if(req.body.id!=null){
         try{
             jwt.getToken(req.headers.token)
-            let oeuvre = await mongodb.getOeuvreId(req.body.id)
+            let oeuvre = await mongodb.getIdOeuvre(req.body.id)
             if(oeuvre){
                 resp.status(201).json(oeuvre)
             }
@@ -34,6 +34,24 @@ oeuvre.post('/getAll',async(req,resp)=>{
         }
     }catch(error){
         resp.status(500).json({error})
+    }
+})
+oeuvre.post('/getCat',async(req,resp)=>{
+    if(req.body.category!=null && req.body.subCategory!=null){
+        try{
+            jwt.getToken(req.headers.token)
+            let oeuvre = await mongodb.getCatOeuvre(req.body.category,req.body.subCategory)
+            if(oeuvre){
+                resp.status(201).json(oeuvre)
+            }
+            else{
+                resp.status(401).json(oeuvre)
+            }
+        }catch(error){
+            resp.status(500).json({error})
+        }
+    }else{
+        resp.status(400).json({error: "Bad request"})
     }
 })
 
