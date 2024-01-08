@@ -3,7 +3,7 @@ const mongodb = require('../Database/categoryDB')
 const jwt = require('../auth/jwt')
 const category = express.Router()
 
-category.post('/get',async(req,resp)=>{
+category.post('/getCat',async(req,resp)=>{
     try{
         let category = await mongodb.getCategory(req.body.category)
         if(category){
