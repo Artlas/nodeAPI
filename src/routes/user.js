@@ -62,6 +62,31 @@ user.post('/connect', async (req, resp) => {
         resp.status(400).json({ error: 'Bad request' });
     }
 });
+
+user.put('/updatePassword',async(req,resp)=>{
+    if(req.body.mail!=null && req.body.password!=null && req.body.newPassword!=null){
+        try {
+            let value = jwt.getToken(req.headers.token)
+            if(value.userdata.permission == 'admin' || value.userdata.mail==req.body.mail){
+                let user = await mongodb.updatePassword(req.body.mail, req.body.password, req.body.newPassword, value.userdata.permission)
+                if(user){
+                    resp.status(201).json(user)
+                }
+                else{
+                    resp.status(401).json(user)
+                }
+            } else {
+                resp.status(401).json({error: "Unauthorized"})
+            }
+        } catch (error) {
+            console.log(error)
+            resp.status(500).json({error})
+        }
+    }else{
+        resp.status(400).json({error: "Bad request"})
+    }
+})
+
 user.post('/check', async (req, resp) => {
     if (req.body.mail != null || req.body.id != null) {
         try {
