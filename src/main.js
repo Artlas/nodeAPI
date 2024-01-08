@@ -8,7 +8,7 @@ const NodeRSA = require('node-rsa');
 const fs = require('fs');
 const app = express();
 const cors = require('cors');
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 const corsObject = cors({
     origin: ['http://localhost:3000', 'https://staging.fournierfamily.ovh', 'https://fournierfamily.ovh'],
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
@@ -22,7 +22,8 @@ app.use(corsObject);
 app.options('/user/*', corsObject);
 app.get('/', apiUp);
 app.use('/user', userRouter);
-app.use('/oeuvre',oeuvreRouter)
+app.use('/oeuvre',oeuvreRouter);
+app.options('/oeuvre/*', corsObject);
 app.get('/authorized', function (req, res) {
     try {
         let value = jwt.getToken(req.headers.token);

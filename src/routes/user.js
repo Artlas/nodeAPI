@@ -2,36 +2,6 @@ const express = require('express');
 const mongodb = require('../Database/userDB');
 const jwt = require('../auth/jwt');
 const user = express.Router();
-user.get('/connect', async (req, resp) => {
-    if ((req.body.mail != null || req.body.id != null) && req.body.password != null) {
-        try {
-            let user = await mongodb.checkUser(req.body.mail, req.body.id, req.body.password);
-            if (user.mail != null) {
-                let token = jwt.createToken({ userdata: { id: user.id, permission: user.permission } });
-                resp.status(201).json({
-                    user: {
-                        token: token,
-                        id: user.id,
-                        mail: user.mail,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        birthdate: user.birthdate,
-                        address: user.address,
-                        image: user.image,
-                        permission: user.permission,
-                    },
-                });
-            } else {
-                resp.status(401).json(user);
-            }
-        } catch (error) {
-            console.log(error);
-            resp.status(500).send(error);
-        }
-    } else {
-        resp.status(400).json({ error: 'Bad request' });
-    }
-});
 user.post('/connect', async (req, resp) => {
     if ((req.body.mail != null || req.body.id != null) && req.body.password != null) {
         try {
