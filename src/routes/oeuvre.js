@@ -3,7 +3,7 @@ const mongodb = require('../Database/oeuvreDB')
 const jwt = require('../auth/jwt')
 const oeuvre = express.Router()
 
-oeuvre.get('/getId',async(req,resp)=>{
+oeuvre.post('/getId',async(req,resp)=>{
     if(req.body.id!=null){
         try{
             jwt.getToken(req.headers.token)
@@ -22,7 +22,7 @@ oeuvre.get('/getId',async(req,resp)=>{
     }
 })
 
-oeuvre.get('/getAll',async(req,resp)=>{
+oeuvre.post('/getAll',async(req,resp)=>{
     try{
         jwt.getToken(req.headers.token)
         let oeuvre = await mongodb.getAllOeuvre()
