@@ -11,7 +11,7 @@ const client = new MongoClient(url, {
     }
 });
 
-async function getOeuvreId(id){
+async function getIdOeuvre(id){
     try {
         await client.connect();
         const db = client.db(bdd);
@@ -50,8 +50,35 @@ async function getAllOeuvre(){
     }
 }
 
+async function getCatOeuvre(category,subCategory){
+    try {
+        await client.connect();
+        const db = client.db(bdd);
+        let query;
+        if(subCategory==="all"){
+            query = {'category':category}
+        } else{
+            query = {'category':category,'subCategory':subCategory}
+        }
+        const collection = db.collection('Oeuvre');
+        let oeuvre = await collection.find(query).toArray()
+        if (oeuvre==null) {
+            return {'error':'Oeuvre not found'};
+        }else{
+            return oeuvre;
+        }
+    } catch (err) {
+        console.log(err)
+        throw err;
+    } finally {
+        if (client) client.close();
+    }
+
+}
+
 
 module.exports = {
-    getOeuvreId,
-    getAllOeuvre
+    getIdOeuvre,
+    getAllOeuvre,
+    getCatOeuvre
 }

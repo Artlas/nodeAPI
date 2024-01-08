@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const apiUp = require('./routes/apiup')
 const userRouter = require('./routes/user')
 const oeuvreRouter = require('./routes/oeuvre')
+const categoryRouter = require('./routes/category')
 const jwt = require('./auth/jwt')
 const NodeRSA = require('node-rsa');
 const fs = require('fs');
@@ -19,11 +20,16 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(corsObject);
-app.options('/user/*', corsObject);
+
 app.get('/', apiUp);
 app.use('/user', userRouter);
+app.options('/user/*', corsObject);
 app.use('/oeuvre',oeuvreRouter);
 app.options('/oeuvre/*', corsObject);
+app.use('/category',categoryRouter);
+app.options('/category/*', corsObject);
+
+
 app.get('/authorized', function (req, res) {
     try {
         let value = jwt.getToken(req.headers.token);
