@@ -90,7 +90,14 @@ async function createUser(id, mail, password, firstName, lastName, birthdate, ad
                     folowing: [],
                     folowers: [],
                     gallery: [],
-                    lists:[],
+                    lists:[
+                        {
+                            listName: 'Favorites',
+                            listImage: '',
+                            listDescription: 'User\'s favorites posts',
+                            listOeuvre:[]
+                        }
+                    ],
                     likedPosts:[]
                 };
                 const result = await collection.insertOne(newUser);
@@ -226,7 +233,7 @@ async function addFriends(userId, friendsId){
     }
 }
 
-async function getUserFriends(userId){
+async function getUserFolowers(userId){
     try{
         await client.connect();
         const db = client.db(bdd);
@@ -237,7 +244,97 @@ async function getUserFriends(userId){
         if(user.error){
             return {error: "User not found"};
         }
-        return user.friends;
+        return user.folowers;
+    }catch(e){
+        console.log(e);
+        return {error: "An error occured"};
+    }finally{
+        if(client) client.close();
+    }
+}
+async function getUserFolowing(userId){
+    try{
+        await client.connect();
+        const db = client.db(bdd);
+        const collection = db.collection('User');
+        let query = {id: userId};
+        //Vérification que l'utilisateur existe
+        let user = await collection.findOne(query);
+        if(user.error){
+            return {error: "User not found"};
+        }
+        return user.folowing;
+    }catch(e){
+        console.log(e);
+        return {error: "An error occured"};
+    }finally{
+        if(client) client.close();
+    }
+}
+async function followArtist(userId,artistId){
+    try{
+        await client.connect();
+        const db = client.db(bdd);
+        const collection = db.collection('User');
+        let query = {id: userId};
+        //Vérification que l'utilisateur existe et n'est pas déjà ami avec le ou les utilisateurs demandés
+        let user = await collection.findOne(query);
+        if(user.error){
+            return {error: "User not found"};
+        }
+        query = {id: artistId};
+        let artist = await collection.findOne(query);
+        if(artist.error){
+            return {error: "Artist not found"};
+        }
+        if(user.folowing.includes(artistId)){
+            return {error: "Already following"};
+        }
+        //Ajout de l'ami
+        user.folowing.push(artistId);
+        artist.folowers.push(userId);
+        //Mise à jour des utilisateurs
+        query = {id: userId};
+        const updateResultUser = await collection.updateOne(query,{$set:{folowing : user.folowing}});
+        query = {id: artistId};
+        const updateResultArtist = await collection.updateOne(query,{$set:{folowers : artist.folowers}});
+        return {updateResultUser,updateResultArtist};
+    }catch(e){
+        console.log(e);
+        return {error: "An error occured"};
+    }finally{
+        if(client) client.close();
+    }
+}
+
+async function unfollowArtist(userId,artistId){
+    try{
+        await client.connect();
+        const db = client.db(bdd);
+        const collection = db.collection('User');
+        let query = {id: userId};
+        //Vérification que l'utilisateur existe et n'est pas déjà ami avec le ou les utilisateurs demandés
+        let user = await collection.findOne(query);
+        if(user.error){
+            return {error: "User not found"};
+        }
+        query = {id: artistId};
+        let artist = await collection.findOne(query);
+        if(artist.error){
+            return {error: "Artist not found"};
+        }
+        if(!user.folowing.includes(artistId)){
+            return {error: "Not following"};
+        }
+        //Ajout de l'ami
+        user.folowing.splice(user.folowing.indexOf(artistId),1);
+        artist.folowers.splice(artist.folowers.indexOf(userId),1);
+        //Mise à jour des utilisateurs
+        query = {id: userId};
+        const updateResultUser = await collection.updateOne(query,{$set:{folowing : user.folowing}});
+        query = {id: artistId};
+        const updateResultArtist = await collection.updateOne(query,{$set:{folowers : artist.folowers}});
+        return {updateResultUser,updateResultArtist};
     }catch(e){
         console.log(e);
         return {error: "An error occured"};
@@ -254,5 +351,8 @@ module.exports = {
     checkUserExists,
     updatePassword,
     addFriends,
-    getUserFriends,
+    getUserFolowers,
+    getUserFolowing,
+    followArtist,
+    unfollowArtist,
 };
