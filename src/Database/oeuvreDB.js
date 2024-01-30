@@ -289,6 +289,117 @@ async function deleteOeuvre(id){
     }
 }
 
+async function checkIfOeuvreExist(id){
+    try {
+        await client.connect();
+        const db = client.db(bdd);
+        let query = {'_id':new ObjectId(id)}
+        const collection = db.collection('Oeuvre');
+        let oeuvre = await collection.findOne(query);
+        if (oeuvre==null) {
+            return false;
+        }else{
+            return true;
+        }
+    } catch (err) {
+        console.log(err)
+        throw err;
+    }
+    finally{
+        if(client) client.close();
+    }
+}
+
+async function createNewList(userId,listName,listImage,listDescription){
+    try {
+        await client.connect();
+        const db = client.db(bdd);
+        let query = {'id':userId}
+        const collection = db.collection('User');
+        let user = await collection.findOne(query);
+        if (user==null) {
+            return {'error':'User not found'};
+        }else{
+            let newList = {
+                listName: listName,
+                listImage: listImage,
+                listDescription: listDescription,
+                listOeuvre:[]
+            };
+            user.lists.push(newList);
+            let result = await collection.updateOne(query,{$set:user})
+            return result;
+        }
+    } catch (err) {
+        console.log(err)
+        throw err;
+    } finally {
+        if (client) client.close();
+    }
+
+}
+
+
+async function addOeuvreToList(userId,listName,oeuvreId){
+    try {
+        await client.connect();
+        const db = client.db(bdd);
+        let query = {'id':userId}
+        const collection = db.collection('User');
+        let user = await collection.findOne(query);
+        if (user==null) {
+            return {'error':'User not found'};
+        }else{
+            let list = user.lists.find((elem)=>elem.listName==listName)
+            if(list==null){
+                return {'error':'List not found'};
+            }else{
+                if(list.listOeuvre.find((elem)=>elem==oeuvreId)!=null){
+                    return {'error':'Oeuvre already in list'};
+                }
+                list.listOeuvre.push(oeuvreId);
+                let result = await collection.updateOne(query,{$set:user});
+                return result;
+            }
+        }
+    } catch (err) {
+        console.log(err)
+        throw err;
+    } finally {
+        if (client) client.close();
+    }
+}
+
+async function removeOeuvreFromList(userId,listName,oeuvreId){
+    try {
+        await client.connect();
+        const db = client.db(bdd);
+        let query = {'id':userId}
+        const collection = db.collection('User');
+        let user = await collection.findOne(query);
+        if (user==null) {
+            return {'error':'User not found'};
+        }else{
+            let list = user.lists.find((elem)=>elem.listName==listName)
+            if(list==null){
+                return {'error':'List not found'};
+            }else{
+                if(list.listOeuvre.find((elem)=>elem==oeuvreId)==null){
+                    return {'error':'Oeuvre not in list'};
+                }
+                list.listOeuvre.splice(list.listOeuvre.indexOf(oeuvreId),1);
+                let result = await collection.updateOne(query,{$set:user});
+                return result;
+            }
+        }
+    } catch (err) {
+        console.log(err)
+        throw err;
+    } finally {
+        if (client) client.close();
+    }
+}
+
 module.exports = {
     getIdOeuvre,
     getAllOeuvre,
@@ -299,5 +410,9 @@ module.exports = {
     dislikePost,
     addOeuvre,
     updateOeuvre,
-    deleteOeuvre
+    deleteOeuvre,
+    checkIfOeuvreExist,
+    createNewList,
+    addOeuvreToList,
+    removeOeuvreFromList,
 }

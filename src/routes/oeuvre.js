@@ -194,4 +194,77 @@ oeuvre.delete('/deleteArt',async (req,resp)=>{
     }
 })
 
+oeuvre.post('/checkIfArtExist', async (req,resp)=>{
+    if(req.body.id!=null){
+        try{
+            // jwt.getToken(req.headers.token)
+            let oeuvre = await mongodb.checkIfOeuvreExist(req.body.id)
+            if(oeuvre){
+                resp.status(201).json(oeuvre)
+            }
+            else{
+                resp.status(401).json(oeuvre)
+            }
+        }catch(err){
+            resp.status(500).json({err})
+        }
+    }else{
+        resp.status(400).json({error: "Bad request"})
+    }
+})
+
+
+oeuvre.post('/createNewList',async(rep,resp)=>{
+    if(rep.body.userId!=null && rep.body.listName!=null && rep.body.listImage != null && rep.body.listDescription != null){
+        try{
+            let oeuvre = await mongodb.createNewList(rep.body.userId,rep.body.listName,rep.body.listImage,rep.body.listDescription)
+            if(oeuvre){
+                resp.status(201).json(oeuvre)
+            }
+            else{
+                resp.status(401).json(oeuvre)
+            }
+        }catch(err){
+            resp.status(500).json({err})
+        }
+    }else{
+        resp.status(400).json({error: "Bad request"})
+    }
+})
+oeuvre.post('/addArtToList',async(rep,resp)=>{
+    if(rep.body.userId!=null && rep.body.listName!=null && rep.body.oeuvreId != null){
+        try{
+            let oeuvre = await mongodb.addOeuvreToList(rep.body.userId,rep.body.listName,rep.body.oeuvreId)
+            if(oeuvre){
+                resp.status(201).json(oeuvre)
+            }
+            else{
+                resp.status(401).json(oeuvre)
+            }
+        }catch(err){
+            resp.status(500).json({err})
+        }
+    }else{
+        resp.status(400).json({error: "Bad request"})
+    }
+})
+
+oeuvre.post('/removeArtFromList',async(req,res)=>{
+    if(req.body.userId!=null && req.body.listName!=null && req.body.oeuvreId != null){
+        try{
+            let oeuvre = await mongodb.removeOeuvreFromList(req.body.userId,req.body.listName,req.body.oeuvreId)
+            if(oeuvre){
+                res.status(201).json(oeuvre)
+            }
+            else{
+                res.status(401).json(oeuvre)
+            }
+        }catch(err){
+            res.status(500).json({err})
+        }
+    }else{
+        res.status(400).json({error: "Bad request"})
+    }
+});
+
 module.exports = oeuvre
