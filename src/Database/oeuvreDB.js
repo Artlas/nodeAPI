@@ -233,7 +233,7 @@ async function updateOeuvre(id,title, description, author, category, subCategory
     try {
         await client.connect();
         const db = client.db(bdd);
-        let query = {'_id':id}
+        let query = {'_id':new ObjectId(id)}
         const collection = db.collection('Oeuvre');
         let oeuvre = await collection.findOne(query);
         if (oeuvre==null) {
@@ -250,7 +250,6 @@ async function updateOeuvre(id,title, description, author, category, subCategory
                 releaseDate: releaseDate,
                 isMediaTypeImages: isMediaTypeImages,
                 author :author,
-                likeCount: likeCount,
                 toSell: toSell,
                 price: price,
                 linkToBuy: linkToBuy,
@@ -273,7 +272,7 @@ async function deleteOeuvre(id){
     try {
         await client.connect();
         const db = client.db(bdd);
-        let query = {'_id':id}
+        let query = {'_id':new ObjectId(id)}
         const collection = db.collection('Oeuvre');
         let oeuvre = await collection.findOne(query);
         if (oeuvre==null) {
