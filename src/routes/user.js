@@ -161,5 +161,46 @@ user.delete('/delete', async (req, resp) => {
         resp.status(400).json({ error: 'Bad request' });
     }
 });
+user.post('/addFriends',async (req,resp)=>{
+    if(req.body.id!=null && req.body.friendId!=null){
+        try{
+            let value = jwt.getToken(req.headers.token)
+            if(value.userdata.permission == 'admin' || value.userdata.id==req.body.id){
+                let user = await mongodb.addFriends(req.body.id,req.body.friendId)
+                if(user){
+                    resp.status(201).json(user)
+                }
+                else{
+                    resp.status(401).json(user)
+                }
+            } else {
+                resp.status(401).json({error: "Unauthorized"})
+            }
+        }catch(error){
+            resp.status(500).json({error})
+        }
+    }else{
+        resp.status(400).json({error: "Bad request"})
+    }
+})
+user.post('/getUserFriends',async (req,resp)=>{
+    if(req.body.id!=null){
+        try{
+            // let value = jwt.getToken(req.headers.token)
+            let user = await mongodb.getUserFriends(req.body.id)
+            if(user){
+                resp.status(201).json(user)
+            }
+            else{
+                resp.status(401).json(user)
+            }
+        }catch(error){
+            resp.status(500).json({error})
+        }
+    }else{
+        resp.status(400).json({error: "Bad request"})
+    }
+})
+
 
 module.exports = user;

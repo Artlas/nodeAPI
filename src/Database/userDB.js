@@ -84,6 +84,7 @@ async function createUser(id, mail, password, firstName, lastName, birthdate, ad
                     birthdate: birthdate,
                     address: address,
                     permission: 'user',
+                    friends: [],
                 };
                 console.log(newUser);
                 const result = await collection.insertOne(newUser);
@@ -182,10 +183,70 @@ async function deleteUser(mail,password){
         if (client) client.close();
     }
 }
+
+async function addFriends(userId, friendsId){
+    try{
+        await client.connect();
+        const db = client.db(bdd);
+        const collection = db.collection('User');
+        let query = {id: userId};
+        //Vérification que l'utilisateur existe et n'est pas déjà ami avec le ou les utilisateurs demandés
+        let user = await collection.findOne(query);
+        if(user.error){
+            return {error: "User not found"};
+        }
+        query = {id: friendsId};
+        let friend = await collection.findOne(query);
+        if(friend.error){
+            return {error: "Friend not found"};
+        }
+        if(user.friends.includes(friendsId)){
+            return {error: "Already friends"};
+        }
+        //Ajout de l'ami
+        user.friends.push(friendsId);
+        friend.friends.push(userId);
+        //Mise à jour des utilisateurs
+        query = {id: userId};
+        const updateResultUser = await collection.updateOne(query,{$set:{friends : user.friends}});
+        query = {id: friendsId};
+        const updateResultFriend = await collection.updateOne(query,{$set:{friends : friend.friends}});
+        return {updateResultUser,updateResultFriend};
+    }catch(e){
+        console.log(e);
+        return {error: "An error occured"};
+    }finally{
+        if(client) client.close();
+    }
+}
+
+async function getUserFriends(userId){
+    try{
+        await client.connect();
+        const db = client.db(bdd);
+        const collection = db.collection('User');
+        let query = {id: userId};
+        //Vérification que l'utilisateur existe
+        let user = await collection.findOne(query);
+        if(user.error){
+            return {error: "User not found"};
+        }
+        return user.friends;
+    }catch(e){
+        console.log(e);
+        return {error: "An error occured"};
+    }finally{
+        if(client) client.close();
+    }
+}
+
 module.exports = {
     checkUser,
     createUser,
     updateUser,
     deleteUser,
     checkUserExists,
+    updatePassword,
+    addFriends,
+    getUserFriends,
 };
