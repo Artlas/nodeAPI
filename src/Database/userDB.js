@@ -83,10 +83,16 @@ async function createUser(id, mail, password, firstName, lastName, birthdate, ad
                     lastName: lastName,
                     birthdate: birthdate,
                     address: address,
+                    image: '',
                     permission: 'user',
                     friends: [],
+                    waitingFriends: [],
+                    folowing: [],
+                    folowers: [],
+                    gallery: [],
+                    lists:[],
+                    likedPosts:[]
                 };
-                console.log(newUser);
                 const result = await collection.insertOne(newUser);
                 return result;
             }
@@ -98,7 +104,7 @@ async function createUser(id, mail, password, firstName, lastName, birthdate, ad
     }
 }
 
-async function updateUser(id, mail, password, firstName, lastName, birthdate, address, permission) {
+async function updateUser(id, mail, password, firstName, lastName, birthdate, address,image ,permission) {
     try {
         await client.connect();
         const db = client.db(bdd);

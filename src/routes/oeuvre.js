@@ -139,12 +139,11 @@ oeuvre.post('/addOeuvre',async (req,resp)=>{
         req.body.category!=null &&
         req.body.subCategory!=null &&
         (req.body.illustration!=null ||req.body.video!=null) &&
-        req.body.isMediaTypeImages!=null &&
-        req.body.likeCount!=null
+        req.body.isMediaTypeImages!=null
     ){
         try{
             // jwt.getToken(req.headers.token)
-            let oeuvre = await mongodb.addOeuvre(req.body.title, req.body.description, req.body.author, req.body.category, req.body.subCategory, req.body.illustration, req.body.video, req.body.isMediaTypeImages, req.body.likeCount,req.body.toSell,req.body.price,req.body.linkToBuy,req.body.canTchat)
+            let oeuvre = await mongodb.addOeuvre(req.body.title, req.body.description, req.body.author, req.body.category, req.body.subCategory, req.body.illustration, req.body.video, req.body.isMediaTypeImages, req.body.toSell,req.body.price,req.body.linkToBuy,req.body.canTchat)
             if(oeuvre){
                 resp.status(201).json(oeuvre)
             }

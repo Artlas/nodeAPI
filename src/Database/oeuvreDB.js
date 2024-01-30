@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const url = process.env.MONGODBURL ||  "mongodb://localhost:27017/";
 const bdd = 'Artlas'
@@ -15,7 +15,8 @@ async function getIdOeuvre(id){
     try {
         await client.connect();
         const db = client.db(bdd);
-        let query = {'_id':parseInt(id)}
+        let query = {'_id':new ObjectId(id)}
+        console.log(query);
         const collection = db.collection('Oeuvre');
         let oeuvre = await collection.findOne(query);
         if (oeuvre==null) {
@@ -119,7 +120,7 @@ async function likePost(postId,userId){
     try {
         await client.connect();
         const db = client.db(bdd);
-        let query = {'_id':parseInt(postId)}
+        let query = {'_id':new ObjectId(postId)}
         const collection = db.collection('Oeuvre');
         let oeuvre = await collection.findOne(query);
         if (oeuvre==null) {
@@ -131,15 +132,16 @@ async function likePost(postId,userId){
             if (user==null) {
                 return {'error':'User not found'};
             }else{
-                let query3 = {'_id':parseInt(postId)}
-                const collection3 = db.collection('Oeuvre');
-                let userLike = oeuvre.likes.find((element) => element == userId);
-                if(userLike!=null){
+                if(user.likedPosts.find((elem)=>elem == postId)!=null){
                     return {'error':'Oeuvre already like by user'}
                 }
-                oeuvre.likes.push(userId);
-                let oeuvre2 = await collection3.updateOne(query3,{$set:{likes:oeuvre.likes}})
-                return oeuvre2;
+                user.likedPosts.push(postId);
+                oeuvre.likeCount+=1;
+                let query3 = {'_id':postId}
+                const collection3 = db.collection('Oeuvre');
+                let oeuvreModif = await collection3.updateOne(query3,{$set:{likeCount:oeuvre.likeCount}})
+                let userModif =await collection2.updateOne({"_id":user._id},{$set:{likedPosts:user.likedPosts}})
+                return {oeuvreModif,userModif};
             }
         }
     } catch (err) {
@@ -155,27 +157,26 @@ async function dislikePost(postId,userId){
     try {
         await client.connect();
         const db = client.db(bdd);
-        let query = {'_id':parseInt(postId)}
+        let query = {'_id':new ObjectId(postId)}
         const collection = db.collection('Oeuvre');
         let oeuvre = await collection.findOne(query);
         if (oeuvre==null) {
             return {'error':'Oeuvre not found'};
         }else{
-            query = {'id':userId}
+            query2 = {'id':userId}
             const collection2 = db.collection('User');
-            let user = await collection2.findOne(query);
+            let user = await collection2.findOne(query2);
             if (user==null) {
                 return {'error':'User not found'};
             }
-            let query3 = {'_id':parseInt(postId)}
-            const collection3 = db.collection('Oeuvre');
-            let userLike = oeuvre.likes.find((element) => element == userId);
-            if(userLike==null){
+            if(user.likedPosts.find((elem)=>elem == postId)==null){
                 return {'error':'Oeuvre not like by user'}
             }
-            oeuvre.likes.splice(oeuvre.likes.indexOf(userId),1);
-            let oeuvre2 = await collection3.updateOne(query3,{$set:{likes:oeuvre.likes}})
-            return oeuvre2;
+            user.likedPosts.splice(user.likedPosts.indexOf(postId),1);
+            oeuvre.likeCount-=1;
+            let oeuvreModif = await collection.updateOne(query,{$set:{likeCount:oeuvre.likeCount}})
+            let userModif = await collection2.updateOne({"_id":user._id},{$set:{likedPosts:user.likedPosts}})
+            return {oeuvreModif,userModif};
         }
     } catch (err) {
         console.log(err)
@@ -185,7 +186,7 @@ async function dislikePost(postId,userId){
     }
 }
 
-async function addOeuvre(title, description, author, category, subCategory, illustration, video,postDate,releaseDate, isMediaTypeImages, likeCount,toSell,price,linkToBuy,canTchat){
+async function addOeuvre(title, description, author, category, subCategory, illustration, video,postDate,releaseDate, isMediaTypeImages,toSell,price,linkToBuy,canTchat){
     try {
         await client.connect();
         const db = client.db(bdd);
@@ -200,7 +201,7 @@ async function addOeuvre(title, description, author, category, subCategory, illu
             releaseDate: releaseDate,
             isMediaTypeImages: isMediaTypeImages,
             author: author,
-            likeCount: likeCount,
+            likeCount: 0,
             toSell: toSell,
             price: price,
             linkToBuy: linkToBuy,
@@ -296,6 +297,7 @@ module.exports = {
     getCatOeuvre,
     getAuthorOeuvre,
     likePost,
+    dislikePost,
     addOeuvre,
     updateOeuvre,
     deleteOeuvre
