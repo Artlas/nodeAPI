@@ -151,6 +151,40 @@ async function likePost(postId,userId){
 
 }
 
+async function dislikePost(postId,userId){
+    try {
+        await client.connect();
+        const db = client.db(bdd);
+        let query = {'_id':parseInt(postId)}
+        const collection = db.collection('Oeuvre');
+        let oeuvre = await collection.findOne(query);
+        if (oeuvre==null) {
+            return {'error':'Oeuvre not found'};
+        }else{
+            query = {'id':userId}
+            const collection2 = db.collection('User');
+            let user = await collection2.findOne(query);
+            if (user==null) {
+                return {'error':'User not found'};
+            }
+            let query3 = {'_id':parseInt(postId)}
+            const collection3 = db.collection('Oeuvre');
+            let userLike = oeuvre.likes.find((element) => element == userId);
+            if(userLike==null){
+                return {'error':'Oeuvre not like by user'}
+            }
+            oeuvre.likes.splice(oeuvre.likes.indexOf(userId),1);
+            let oeuvre2 = await collection3.updateOne(query3,{$set:{likes:oeuvre.likes}})
+            return oeuvre2;
+        }
+    } catch (err) {
+        console.log(err)
+        throw err;
+    } finally {
+        if (client) client.close();
+    }
+}
+
 async function addOeuvre(title, description, author, category, subCategory, illustration, video,postDate,releaseDate, isMediaTypeImages, likeCount,toSell,price,linkToBuy,canTchat){
     try {
         await client.connect();
@@ -194,6 +228,66 @@ async function addOeuvre(title, description, author, category, subCategory, illu
     }
 }
 
+async function updateOeuvre(id,title, description, author, category, subCategory, illustration, video,postDate,releaseDate, isMediaTypeImages, likeCount,toSell,price,linkToBuy,canTchat){
+    try {
+        await client.connect();
+        const db = client.db(bdd);
+        let query = {'_id':id}
+        const collection = db.collection('Oeuvre');
+        let oeuvre = await collection.findOne(query);
+        if (oeuvre==null) {
+            return {'error':'Oeuvre not found'};
+        }else{
+            let newOeuvre = {
+                title: title,
+                description: description,
+                category: category,
+                subCategory: subCategory,
+                illustration: illustration,
+                video: video,
+                postDate:postDate ,
+                releaseDate: releaseDate,
+                isMediaTypeImages: isMediaTypeImages,
+                author :author,
+                likeCount: likeCount,
+                toSell: toSell,
+                price: price,
+                linkToBuy: linkToBuy,
+                canTchat: canTchat,
+            };
+            let result = await collection.updateOne(query,{$set:newOeuvre})
+            return result;
+        }
+    }
+    catch (err) {
+        console.log(err)
+        throw err;
+    }
+    finally{
+        if(client) client.close();
+    }
+}
+
+async function deleteOeuvre(id){
+    try {
+        await client.connect();
+        const db = client.db(bdd);
+        let query = {'_id':id}
+        const collection = db.collection('Oeuvre');
+        let oeuvre = await collection.findOne(query);
+        if (oeuvre==null) {
+            return {'error':'Oeuvre not found'};
+        }else{
+            let result = await collection.deleteOne(query)
+            return result;
+        }
+    } catch (err) {
+        console.log(err)
+        throw err;
+    } finally {
+        if (client) client.close();
+    }
+}
 
 module.exports = {
     getIdOeuvre,
@@ -202,5 +296,7 @@ module.exports = {
     getCatOeuvre,
     getAuthorOeuvre,
     likePost,
-    addOeuvre
+    addOeuvre,
+    updateOeuvre,
+    deleteOeuvre
 }

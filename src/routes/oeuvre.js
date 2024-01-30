@@ -21,7 +21,7 @@ oeuvre.post('/getId',async(req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
-oeuvre.post('/getAuthorOeuvre',async(req,resp)=>{
+oeuvre.post('/getIdUser',async(req,resp)=>{
     if(req.body.author!=null){
         try{
             // jwt.getToken(req.headers.token)
@@ -53,7 +53,7 @@ oeuvre.post('/getAll',async(req,resp)=>{
         resp.status(500).json({error})
     }
 })
-oeuvre.post('/getAllId',async(req,resp)=>{
+oeuvre.post('/getAllIds',async(req,resp)=>{
     try{
         // jwt.getToken(req.headers.token)
         let oeuvre = await mongodb.getAllIdOeuvre()
@@ -108,6 +108,28 @@ oeuvre.post('/likePost', async (req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
+oeuvre.post('/dislikePost', async (req,resp)=>{
+    if(req.body.postId!=null && req.body.userId!=null){
+        // jwt.getToken(req.headers.token)
+        // if(value.userdata.permission == 'admin' || value.userdata.id==req.body.id){
+        try{
+            let oeuvre = await mongodb.dislikePost(req.body.postId,req.body.userId)
+            if(oeuvre){
+                resp.status(201).json(oeuvre)
+            }
+            else{
+                resp.status(401).json(oeuvre)
+            }
+        }catch(error){
+            resp.status(500).json({error})
+        }
+        // } else {
+        //     resp.status(401).json({error: "Unauthorized"})
+        // }
+    }else{
+        resp.status(400).json({error: "Bad request"})
+    }
+})
 
 oeuvre.post('/addOeuvre',async (req,resp)=>{
     if(
@@ -123,6 +145,42 @@ oeuvre.post('/addOeuvre',async (req,resp)=>{
         try{
             // jwt.getToken(req.headers.token)
             let oeuvre = await mongodb.addOeuvre(req.body.title, req.body.description, req.body.author, req.body.category, req.body.subCategory, req.body.illustration, req.body.video, req.body.isMediaTypeImages, req.body.likeCount,req.body.toSell,req.body.price,req.body.linkToBuy,req.body.canTchat)
+            if(oeuvre){
+                resp.status(201).json(oeuvre)
+            }
+            else{
+                resp.status(401).json(oeuvre)
+            }
+        }catch(error){
+            resp.status(500).json({error})
+        }
+    }else{
+        resp.status(400).json({error: "Bad request"})
+    }
+})
+oeuvre.put('/updateArt',async (req,resp)=>{
+    if(req.body.id!=null){
+        try{
+            // jwt.getToken(req.headers.token)
+            let oeuvre = await mongodb.updateOeuvre(req.body.id,req.body.title, req.body.description, req.body.author, req.body.category, req.body.subCategory, req.body.illustration, req.body.video, req.body.isMediaTypeImages, req.body.likeCount,req.body.toSell,req.body.price,req.body.linkToBuy,req.body.canTchat)
+            if(oeuvre){
+                resp.status(201).json(oeuvre)
+            }
+            else{
+                resp.status(401).json(oeuvre)
+            }
+        }catch(error){
+            resp.status(500).json({error})
+        }
+    }else{
+        resp.status(400).json({error: "Bad request"})
+    }
+})
+oeuvre.delete('/deleteArt',async (req,resp)=>{
+    if(req.body.id!=null){
+        try{
+            // jwt.getToken(req.headers.token)
+            let oeuvre = await mongodb.deleteOeuvre(req.body.id)
             if(oeuvre){
                 resp.status(201).json(oeuvre)
             }
