@@ -1,6 +1,7 @@
 const express = require('express')
 const mongodb = require('../Database/oeuvreDB')
 const jwt = require('../auth/jwt')
+const { CopySourceOptions } = require('minio')
 const oeuvre = express.Router()
 
 /**
@@ -187,7 +188,7 @@ oeuvre.post('/addOeuvre',async (req,resp)=>{
     ){
         try{
             // jwt.getToken(req.headers.token)
-            let oeuvre = await mongodb.addOeuvre(req.body.title, req.body.description, req.body.author, req.body.category, req.body.subCategory, req.body.illustration, req.body.video, req.body.isMediaTypeImages, req.body.toSell,req.body.price,req.body.linkToBuy,req.body.canTchat)
+            let oeuvre = await mongodb.addOeuvre(req.body.title, req.body.description, req.body.author, req.body.category, req.body.subCategory, req.body.illustration, req.body.video, req.body.isMediaTypeImages,req.body.postDate,req.body.releaseDate ,req.body.toSell,req.body.price,req.body.linkToBuy,req.body.canTchat)
             if(oeuvre){
                 resp.status(201).json(oeuvre)
             }

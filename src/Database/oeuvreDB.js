@@ -1,4 +1,6 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const minio = require('../Database/minio')
+const fs = require('fs')
 
 const url = process.env.MONGODBURL ||  "mongodb://localhost:27017/";
 const bdd = 'Artlas'
@@ -22,6 +24,15 @@ async function getIdOeuvre(id){
         if (oeuvre==null) {
             return {'error':'Oeuvre not found'};
         }else{
+            if(oeuvre.isMediaTypeImages){
+                if(oeuvre.isMediaTypeImages){
+                    len = oeuvre.illustration
+                    oeuvre.illustration = []
+                    for(let j=0;j<len;j++){
+                        oeuvre.illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre._id}_${j}.png`))
+                    }
+                }
+            }
             return oeuvre;
         }
     } catch (err) {
@@ -42,6 +53,15 @@ async function getAuthorOeuvre(author){
         if (oeuvre==null) {
             return {'error':'Oeuvre not found'};
         }else{
+            for (let i=0 ;i<oeuvre.length;i++){
+                if(oeuvre[i].isMediaTypeImages){
+                    len = oeuvre[i].illustration
+                    oeuvre[i].illustration = []
+                    for(let j=0;j<len;j++){
+                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}_${j}.png`))
+                    }
+                }
+            }
             return oeuvre;
         }
     } catch (err) {
@@ -61,6 +81,15 @@ async function getAllOeuvre(){
         if (oeuvre==null) {
             return {'error':'Oeuvre not found'};
         }else{
+            for (let i=0 ;i<oeuvre.length;i++){
+                if(oeuvre[i].isMediaTypeImages){
+                    len = oeuvre[i].illustration
+                    oeuvre[i].illustration = []
+                    for(let j=0;j<len;j++){
+                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}_${j}.png`))
+                    }
+                }
+            }
             return oeuvre;
         }
     } catch (err) {
@@ -105,6 +134,15 @@ async function getCatOeuvre(category,subCategory){
         if (oeuvre==null) {
             return {'error':'Oeuvre not found'};
         }else{
+            for (let i=0 ;i<oeuvre.length;i++){
+                if(oeuvre[i].isMediaTypeImages){
+                    len = oeuvre[i].illustration
+                    oeuvre[i].illustration = []
+                    for(let j=0;j<len;j++){
+                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}_${j}.png`))
+                    }
+                }
+            }
             return oeuvre;
         }
     } catch (err) {
@@ -186,7 +224,7 @@ async function dislikePost(postId,userId){
     }
 }
 
-async function addOeuvre(title, description, author, category, subCategory, illustration, video,postDate,releaseDate, isMediaTypeImages,toSell,price,linkToBuy,canTchat){
+async function addOeuvre(title, description, author, category, subCategory, illustration, video,isMediaTypeImages,postDate,releaseDate,toSell,price,linkToBuy,canTchat){
     try {
         await client.connect();
         const db = client.db(bdd);
@@ -195,11 +233,11 @@ async function addOeuvre(title, description, author, category, subCategory, illu
             description: description,
             category: category,
             subCategory: subCategory,
-            illustration: illustration,
             video: video,
             postDate:postDate ,
             releaseDate: releaseDate,
-            isMediaTypeImages: isMediaTypeImages,
+            illustration: illustration.length,
+            isMediaTypeImages: Boolean(isMediaTypeImages),
             author: author,
             likeCount: 0,
             toSell: toSell,
@@ -220,6 +258,10 @@ async function addOeuvre(title, description, author, category, subCategory, illu
         }
         const collection = db.collection('Oeuvre');
         let result = await collection.insertOne(newOeuvre);
+        console.log(`New Oeuvre inserted with id ${result.insertedId}`);
+        for(let i=0;i<illustration.length;i++){
+            minio.uploadFile(`/oeuvre/${author}/${result.insertedId}_${i}.png`,illustration[i])
+        }
         return result;
     } catch (err) {
         console.log(err)
