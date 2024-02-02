@@ -3,6 +3,9 @@ const mongodb = require('../Database/categoryDB')
 const jwt = require('../auth/jwt')
 const category = express.Router()
 
+/**
+ * @useage : get all category
+ */
 category.post('/getAllCat',async(req,resp)=>{
     try{
         let category = await mongodb.getCategory(req.body.category)
@@ -16,6 +19,11 @@ category.post('/getAllCat',async(req,resp)=>{
         resp.status(500).json({error})
     }
 })
+/**
+ * @useage : add a category
+ * @param category : nom de la catégorie
+ * @param miniatureLink : lien miniature
+ */
 category.post('/addCat',async(req,resp)=>{
     if(req.body.category!=null && req.body.miniatureLink!=null){
         try{
@@ -34,6 +42,12 @@ category.post('/addCat',async(req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
+/**
+ * @useage : add a sub category
+ * @param category : nom de la catégorie
+ * @param subCategory : nom de la sous catégorie
+ * @param miniatureLink : lien miniature
+ */
 category.post('/addSubCat', async(req,resp)=>{
     if(req.body.category!=null && req.body.subCategory!=null && req.body.miniatureLink!=null){
         try{
@@ -52,6 +66,12 @@ category.post('/addSubCat', async(req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
+/**
+ * @useage : update a category
+ * @param category : nom de la catégorie
+ * @param newCategory : nouveau nom de la catégorie
+ * @param newMiniatureLink : nouveau lien miniature
+ */
 category.put('/updateCat', async(req,resp)=>{
     if(req.body.category!=null && req.body.newCategory!=null,req.body.newMiniatureLink!=null){
         try{
@@ -70,6 +90,13 @@ category.put('/updateCat', async(req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
+/**
+ * @useage : update a sub category
+ * @param category : nom de la catégorie
+ * @param subCategory : nom de la sous catégorie
+ * @param newSubCategory : nouveau nom de la sous catégorie
+ * @param newMiniatureLink : nouveau lien miniature
+ */
 category.put('/updateSubCat',async(req,resp)=>{
     if(req.body.category!=null && req.body.subCategory!=null && req.body.newSubCategory!=null && req.body.newMiniatureLink!=null){
         try{
@@ -88,6 +115,10 @@ category.put('/updateSubCat',async(req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
+/**
+ * @useage : delete a category
+ * @param category : nom de la catégorie
+ */
 category.delete('/deleteCat',async(req,resp)=>{
     if(req.body.category!=null){
         try{
@@ -110,6 +141,11 @@ category.delete('/deleteCat',async(req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
+/**
+ * @useage : delete a sub category
+ * @param category : nom de la catégorie
+ * @param subCategory : nom de la sous catégorie
+ */
 category.delete('/deleteSubCat',async(req,resp)=>{
     if(req.body.category!=null && req.body.subCategory!=null){
         try{

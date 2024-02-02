@@ -2,6 +2,13 @@ const express = require('express');
 const mongodb = require('../Database/userDB');
 const jwt = require('../auth/jwt');
 const user = express.Router();
+
+/**
+ * @useage : connect a use to get a token for authentication
+ * @param mail in body: mail de l'utilisateur à connecter (si id est null)
+ * @param id in body: id de l'utilisateur à connecter (si mail est null)
+ * @param password in body: mot de passe de l'utilisateur à connecter
+ */
 user.post('/connect', async (req, resp) => {
     if ((req.body.mail != null || req.body.id != null) && req.body.password != null) {
         try {
@@ -33,6 +40,13 @@ user.post('/connect', async (req, resp) => {
     }
 });
 
+/**
+ * @useage : Update d'un mot de passe
+ * @param token in headers: token de l'utilisateur connecté
+ * @param mail in body: mail de l'utilisateur à connecter (si id est null)
+ * @param password in body: mot de passe actuel de l'utilisateur
+ * @param newPassword in body: nouveau mot de passe de l'utilisateur
+ */
 user.put('/updatePassword',async(req,resp)=>{
     if(req.body.mail!=null && req.body.password!=null && req.body.newPassword!=null){
         try {
@@ -57,6 +71,12 @@ user.put('/updatePassword',async(req,resp)=>{
     }
 })
 
+/**
+ * @useage : check if user exists
+ * @param token in headers: token de l'utilisateur connecté
+ * @param mail in body: mail de l'utilisateur à connecter (si id est null)
+ * @param id in body: id de l'utilisateur à connecter (si mail est null)
+*/
 user.post('/check', async (req, resp) => {
     if (req.body.mail != null || req.body.id != null) {
         try {
@@ -75,6 +95,17 @@ user.post('/check', async (req, resp) => {
     }
 });
 
+/**
+ * @useage : ajout d'un utilisateur
+ * @param mail in body: mail de l'utilisateur à crée
+ * @param id in body: id de l'utilisateur à crée
+ * @param password in body: mot de passe de l'utilisateur à crée
+ * @param firstName in body: prénom de l'utilisateur à crée
+ * @param lastName in body: nom de l'utilisateur à crée
+ * @param birthdate in body: date de naissance de l'utilisateur à crée
+ * @param address in body: adresse de l'utilisateur à crée
+ * @param image in body: image de l'utilisateur à crée
+ */
 user.post('/add', async (req, resp) => {
     if (
         req.body.id != null &&
@@ -99,6 +130,18 @@ user.post('/add', async (req, resp) => {
         resp.status(400).json({ error: 'Bad request' });
     }
 });
+/**
+    * @useage : modification d'un utilisateur
+    * @param id in body: id de l'utilisateur à modifier
+    * @param mail in body: mail de l'utilisateur à modifier
+    * @param password in body: mot de passe de l'utilisateur à modifier
+    * @param password in query : nouveau mot de passe si modification du mot de passe
+    * @param firstName in body: prénom de l'utilisateur à modifier
+    * @param lastName in body: nom de l'utilisateur à modifier
+    * @param birthdate in body: date de naissance de l'utilisateur à modifier
+    * @param address in body: adresse de l'utilisateur à modifier
+    * @param image in body: image de l'utilisateur à modifier
+    */
 user.put('/update', async (req, resp) => {
     if (
         req.body.id != null &&
@@ -140,6 +183,14 @@ user.put('/update', async (req, resp) => {
         resp.status(400).json({ error: 'Bad request' });
     }
 });
+
+/**
+ * @useage : suppression d'un utilisateur
+ * @param mail in body: mail de l'utilisateur à supprimer
+ * @param password in body: mot de passe de l'utilisateur à supprimer
+ * @param id in body: id de l'utilisateur à supprimer
+ * @param token in headers: token de l'utilisateur connecté
+ */
 user.delete('/delete', async (req, resp) => {
     if ((req.body.mail != null || req.body.id != null) && req.body.password != null && req.headers.token != null) {
         try {
@@ -161,6 +212,12 @@ user.delete('/delete', async (req, resp) => {
         resp.status(400).json({ error: 'Bad request' });
     }
 });
+
+/**
+ * @useage : récupération des folowers d'un utilisateur
+ * @param id in body: id de l'utilisateur à récupérer
+ * @param token in headers: token de l'utilisateur connecté
+ */
 user.post('/getUserFolowers',async (req,resp)=>{
     if(req.body.id!=null){
         try{
@@ -179,7 +236,11 @@ user.post('/getUserFolowers',async (req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
-
+/**
+ * @useage récupération des folowing d'un utilisateur
+ * @param id in body: id de l'utilisateur à récupérer
+ * @param token in headers : token de l'utilisateur connecté
+ */
 user.post('/getUserFolowing',async (req,resp)=>{
     if(req.body.id!=null){
         try{
@@ -199,6 +260,12 @@ user.post('/getUserFolowing',async (req,resp)=>{
     }
 })
 
+/**
+ * @useage : suivre un utilisateur
+ * @param userId in body: id de l'utilisateur qui suit
+ * @param artistId in body: id de l'artiste à suivre
+ * @param token in headers : token de l'utilisateur connecté
+ */
 user.post('/followArtist', async (req,resp)=>{
     if(req.body.userId!=null && req.body.artistId!=null){
         try{
@@ -221,6 +288,13 @@ user.post('/followArtist', async (req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
+
+/**
+ * @useage : arreter de suivre un utilisateur
+ * @param userId in body: id de l'utilisateur qui arrete de suivre
+ * @param artistId in body: id de l'artiste a arreter de suivre
+ * @param token in headers : token de l'utilisateur connecté
+ */
 user.post('/unfollowArtist', async (req,resp)=>{
     if(req.body.userId!=null && req.body.artistId!=null){
         try{

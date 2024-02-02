@@ -4,6 +4,9 @@ const mariadb = require('../mariadb')
 
 const apiUp = express.Router()
 
+/**
+ * @usage : verification que l'api est en ligne
+ */
 apiUp.get('/',(req,resp)=>{
     async function run(){
         let respObj = {

@@ -3,6 +3,10 @@ const mongodb = require('../Database/oeuvreDB')
 const jwt = require('../auth/jwt')
 const oeuvre = express.Router()
 
+/**
+ * @useage : Récupérer les ids des oeuvres
+ * @param token in headers : token de l'utilisateur connecté
+ */
 oeuvre.post('/getId',async(req,resp)=>{
     if(req.body.id!=null){
         try{
@@ -21,6 +25,12 @@ oeuvre.post('/getId',async(req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
+
+/**
+ * @useage : Récupérer les oeuvres d'un auteur
+ * @param token in headers : token de l'utilisateur connecté
+ * @param author in body : id de l'auteur pour récupérer ses oeuvres
+ */
 oeuvre.post('/getIdUser',async(req,resp)=>{
     if(req.body.author!=null){
         try{
@@ -39,6 +49,9 @@ oeuvre.post('/getIdUser',async(req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
+/**
+ * @useage : Récupérer toutes les oeuvres
+ */
 oeuvre.post('/getAll',async(req,resp)=>{
     try{
         // jwt.getToken(req.headers.token)
@@ -53,6 +66,9 @@ oeuvre.post('/getAll',async(req,resp)=>{
         resp.status(500).json({error})
     }
 })
+/**
+ * @useage : Récupéré toutes les id des oeuvres
+ */
 oeuvre.post('/getAllIds',async(req,resp)=>{
     try{
         // jwt.getToken(req.headers.token)
@@ -67,6 +83,12 @@ oeuvre.post('/getAllIds',async(req,resp)=>{
         resp.status(500).json({error})
     }
 })
+/**
+ * @useage : Récupérer les oeuvres d'une catégorie
+ * @param token in headers : token de l'utilisateur connecté
+ * @param category in body : catégorie de l'oeuvre à chercher
+ * @param subCategory in body : sous catégorie de l'oeuvre à chercher
+ */
 oeuvre.post('/getCat',async(req,resp)=>{
     if(req.body.category!=null && req.body.subCategory!=null){
         try{
@@ -85,10 +107,14 @@ oeuvre.post('/getCat',async(req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
-
+/**
+ * @useage : Like une oeuvre
+ * @param token in headers : token de l'utilisateur connecté
+ * @param postId in body : id de l'oeuvre à liker
+ */
 oeuvre.post('/likePost', async (req,resp)=>{
     if(req.body.postId!=null && req.body.userId!=null){
-        // jwt.getToken(req.headers.token)
+        // value = jwt.getToken(req.headers.token)
         // if(value.userdata.permission == 'admin' || value.userdata.id==req.body.id){
         try{
             let oeuvre = await mongodb.likePost(req.body.postId,req.body.userId)
@@ -108,6 +134,11 @@ oeuvre.post('/likePost', async (req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
+/**
+ * @useage : Supprime le like d'une oeuvre par un utilisateur
+ * @param token in headers : token de l'utilisateur connecté
+ * @param postId in body : id de l'oeuvre à disliker
+ */
 oeuvre.post('/dislikePost', async (req,resp)=>{
     if(req.body.postId!=null && req.body.userId!=null){
         // jwt.getToken(req.headers.token)
@@ -130,7 +161,20 @@ oeuvre.post('/dislikePost', async (req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
-
+/**
+ * @useage : Ajouter une oeuvre
+ * @param token in headers : token de l'utilisateur connecté
+ * @param title in body : titre de l'oeuvre
+ * @param description in body : description de l'oeuvre
+ * @param author in body : id de l'auteur de l'oeuvre
+ * @param category in body : catégorie de l'oeuvre
+ * @param subCategory in body : sous catégorie de l'oeuvre
+ * @param illustration in body : illustration de l'oeuvre
+ * @param video in body : video de l'oeuvre
+ * @param isMediaTypeImages in body : type de média de l'oeuvre
+ * @param toSell in body : si l'oeuvre est à vendre
+ * @param price in body : prix de l'oeuvre
+ */
 oeuvre.post('/addOeuvre',async (req,resp)=>{
     if(
         req.body.title!=null &&
@@ -157,6 +201,20 @@ oeuvre.post('/addOeuvre',async (req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
+/**
+ * @useage : Mettre à jour une oeuvre
+ * @param token in headers : token de l'utilisateur connecté
+ * @param id in body : id de l'oeuvre à mettre à jour
+ * @param title in body : titre de l'oeuvre
+ * @param description in body : description de l'oeuvre
+ * @param author in body : id de l'auteur de l'oeuvre
+ * @param category in body : catégorie de l'oeuvre
+ * @param subCategory in body : sous catégorie de l'oeuvre
+ * @param illustration in body : illustration de l'oeuvre
+ * @param video in body : video de l'oeuvre
+ * @param isMediaTypeImages in body : type de média de l'oeuvre
+ * @param toSell in body : si l'oeuvre est à vendre
+ */
 oeuvre.put('/updateArt',async (req,resp)=>{
     if(req.body.id!=null){
         try{
@@ -175,6 +233,11 @@ oeuvre.put('/updateArt',async (req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
+/**
+ * @useage : Supprimer une oeuvre
+ * @param token in headers : token de l'utilisateur connecté
+ * @param id in body : id de l'oeuvre à supprimer
+ */
 oeuvre.delete('/deleteArt',async (req,resp)=>{
     if(req.body.id!=null){
         try{
@@ -193,7 +256,11 @@ oeuvre.delete('/deleteArt',async (req,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
-
+/**
+ * @useage : Vérifier si une oeuvre existe
+ * @param token in headers : token de l'utilisateur connecté
+ * @param id in body : id de l'oeuvre à vérifier
+ */
 oeuvre.post('/checkIfArtExist', async (req,resp)=>{
     if(req.body.id!=null){
         try{
@@ -213,7 +280,14 @@ oeuvre.post('/checkIfArtExist', async (req,resp)=>{
     }
 })
 
-
+/**
+ * @useage : Crée une liste pour un utilisateur
+ * @param token in headers : token de l'utilisateur connecté
+ * @param userId in body : id de l'utilisateur
+ * @param listName in body : nom de la liste
+ * @param listImage in body : image de la liste
+ * @param listDescription in body : description de la liste
+ */
 oeuvre.post('/createNewList',async(rep,resp)=>{
     if(rep.body.userId!=null && rep.body.listName!=null && rep.body.listImage != null && rep.body.listDescription != null){
         try{
@@ -231,6 +305,12 @@ oeuvre.post('/createNewList',async(rep,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
+/**
+ * @useage : Ajoute une oeuvre à une liste
+ * @param token in headers : token de l'utilisateur connecté
+ * @param userId in body : id de l'utilisateur
+ * @param listName in body : nom de la liste
+ */
 oeuvre.post('/addArtToList',async(rep,resp)=>{
     if(rep.body.userId!=null && rep.body.listName!=null && rep.body.oeuvreId != null){
         try{
@@ -248,7 +328,13 @@ oeuvre.post('/addArtToList',async(rep,resp)=>{
         resp.status(400).json({error: "Bad request"})
     }
 })
-
+/**
+ * @useage : Enlever une oeuvre d'une liste
+ * @param token in headers : token de l'utilisateur connecté
+ * @param userId in body : id de l'utilisateur
+ * @param listName in body : nom de la liste
+ * @param oeuvreId in body : id de l'oeuvre
+ */
 oeuvre.post('/removeArtFromList',async(req,res)=>{
     if(req.body.userId!=null && req.body.listName!=null && req.body.oeuvreId != null){
         try{
