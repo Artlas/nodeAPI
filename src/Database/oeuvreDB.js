@@ -29,7 +29,7 @@ async function getIdOeuvre(id){
                     len = oeuvre.illustration
                     oeuvre.illustration = []
                     for(let j=0;j<len;j++){
-                        oeuvre.illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre._id}_${j}.png`))
+                        oeuvre.illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre._id}/${j}.png`))
                     }
                 }
             }
@@ -58,7 +58,7 @@ async function getAuthorOeuvre(author){
                     len = oeuvre[i].illustration
                     oeuvre[i].illustration = []
                     for(let j=0;j<len;j++){
-                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}_${j}.png`))
+                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${j}.png`))
                     }
                 }
             }
@@ -86,7 +86,7 @@ async function getAllOeuvre(){
                     len = oeuvre[i].illustration
                     oeuvre[i].illustration = []
                     for(let j=0;j<len;j++){
-                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}_${j}.png`))
+                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${j}.png`))
                     }
                 }
             }
@@ -139,7 +139,7 @@ async function getCatOeuvre(category,subCategory){
                     len = oeuvre[i].illustration
                     oeuvre[i].illustration = []
                     for(let j=0;j<len;j++){
-                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}_${j}.png`))
+                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${j}.png`))
                     }
                 }
             }
@@ -260,7 +260,7 @@ async function addOeuvre(title, description, author, category, subCategory, illu
         let result = await collection.insertOne(newOeuvre);
         console.log(`New Oeuvre inserted with id ${result.insertedId}`);
         for(let i=0;i<illustration.length;i++){
-            minio.uploadFile(`/oeuvre/${author}/${result.insertedId}_${i}.png`,illustration[i])
+            minio.uploadFile(`/oeuvre/${author}/${result.insertedId}/${i}.png`,illustration[i])
         }
         return result;
     } catch (err) {
