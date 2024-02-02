@@ -1,13 +1,14 @@
 const express = require('express')
 const mongodb = require('../Database/oeuvreDB')
 const jwt = require('../auth/jwt')
+const minio = require('../Database/minio')
 const oeuvre = express.Router()
 
 /**
- * @useage : Récupérer les ids des oeuvres
+ * @useage : Récupérer une oeuvre a travers son id
  * @param token in headers : token de l'utilisateur connecté
  */
-oeuvre.post('/getId',async(req,resp)=>{
+oeuvre.post('/getArtById',async(req,resp)=>{
     if(req.body.id!=null){
         try{
             // jwt.getToken(req.headers.token)
