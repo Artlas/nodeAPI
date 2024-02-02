@@ -19,6 +19,28 @@ category.post('/getAllCat',async(req,resp)=>{
         resp.status(500).json({error})
     }
 })
+
+/**
+ * @useage : get all sub category form a category
+ * @param category : nom de la catégorie
+ */
+category.post('/getAllSubCat',async(req,resp)=>{
+    if(req.body.category!=null){
+        try{
+            let category = await mongodb.getSubCategory(req.body.category)
+            if(category){
+                resp.status(201).json(category)
+            }
+            else{
+                resp.status(401).json(category)
+            }
+        }catch(error){
+            resp.status(500).json({error})
+        }
+    }else{
+        resp.status(400).json({error: "Bad request"})
+    }
+})
 /**
  * @useage : add a category
  * @param category : nom de la catégorie

@@ -29,6 +29,31 @@ async function getCategory(){
         if (client) client.close();
     }
 }
+
+async function getSubCategory(category){
+    try {
+        await client.connect();
+        const db = client.db(bdd);
+        const collection = db.collection('Art');
+        let query = {'name':category}
+        let categoryExist = await collection
+            .find(query)
+            .project({subcategories:1,_id:0})
+            .toArray()
+        if (categoryExist==null) {
+            return {'error':'Category not found'};
+        }else{
+            return categoryExist;
+        }
+    }catch(e){
+        console.log(e)
+        throw e;
+    }
+    finally {
+        if (client) client.close();
+    }
+}
+
 async function addCat(category,miniatureLink){
     try {
         await client.connect();
@@ -176,6 +201,7 @@ async function deleteSubCat(category,subCategory){
 
 module.exports = {
     getCategory,
+    getSubCategory,
     addCat,
     addSubCat,
     updateCat,
