@@ -1,7 +1,6 @@
 const express = require('express')
 const mongodb = require('../Database/oeuvreDB')
 const jwt = require('../auth/jwt')
-const minio = require('../Database/minio')
 const oeuvre = express.Router()
 
 /**
