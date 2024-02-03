@@ -179,8 +179,6 @@ oeuvre.post('/dislikePost', async (req,resp)=>{
  * @param price in body : prix de l'oeuvre
  */
 oeuvre.post('/addOeuvre',upload.array('illustration',10),async (req,resp)=>{
-    console.log(req.body)
-    console.log(req.files)
     if(
         req.body.title!=null &&
         req.body.description!=null &&

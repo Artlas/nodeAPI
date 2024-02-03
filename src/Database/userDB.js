@@ -355,7 +355,6 @@ async function getUser(id){
         }else{
             let nonConfientialInfo = {
                 id: user.id,
-                image: user.image,
                 folowing: user.folowing,
                 gallery: user.gallery,
                 likedPosts: user.likedPosts
