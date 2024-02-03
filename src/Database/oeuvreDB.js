@@ -260,7 +260,7 @@ async function addOeuvre(title, description, author, category, subCategory, illu
         let result = await collection.insertOne(newOeuvre);
         console.log(`New Oeuvre inserted with id ${result.insertedId}`);
         for(let i=0;i<illustration.length;i++){
-            minio.uploadFile(`/oeuvre/${author}/${result.insertedId}/${i}.png`,illustration[i])
+            minio.uploadFile(`/oeuvre/${author}/${result.insertedId}/${illustration[i].originalname}`,illustration[i])
         }
         return result;
     } catch (err) {

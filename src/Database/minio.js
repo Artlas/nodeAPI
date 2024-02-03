@@ -9,7 +9,7 @@ var minioClient = new Minio.Client({
 
 async function uploadFile(pathName,fileUp){
     try{
-        await minioClient.putObject(bucketName, pathName, fileUp.contents);
+        await minioClient.putObject(bucketName, pathName, fileUp.buffer);
         return {code:'OK',message:`file ${fileUp} uploaded successfully`}
     }catch(err){
         console.log(`error in uploading the file ${fileUp}: ${err}`);
