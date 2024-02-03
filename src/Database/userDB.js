@@ -370,6 +370,22 @@ async function getUser(id){
     }
 }
 
+async function getUsersId(){
+    try{
+        await client.connect();
+        const db = client.db(bdd);
+        const collection = db.collection('User');
+        let users = await collection.find({},{projection:{id:1}}).toArray();
+        let ids= users.map((elem)=>elem.id)
+        return ids;
+    }catch(e){
+        console.log(e);
+        return {error: "An error occured"};
+    }finally{
+        if(client) client.close();
+    }
+}
+
 module.exports = {
     checkUser,
     createUser,
@@ -383,4 +399,5 @@ module.exports = {
     followArtist,
     unfollowArtist,
     getUser,
+    getUsersId,
 };
