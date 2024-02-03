@@ -1,5 +1,6 @@
 var Minio = require('minio')
-var fs = require('fs')
+var fs = require('fs');
+const { response } = require('express');
 var bucketName = 'artlas'
 var minioClient = new Minio.Client({
     endPoint: 'minio.fournierfamily.ovh',
@@ -22,9 +23,10 @@ async function getFile(pathName){
         var buff = [];
         minioClient.getObject(bucketName,pathName).then(function(dataStream) {
             dataStream.on('data', async function(chunk) {
-                buff+=chunk;
+                buff.push(chunk);
             });
             dataStream.on('end', function() {
+                buff = Buffer.concat(buff).toString("base64");
                 resolve(buff);
             });
             dataStream.on('error', function(err) {
@@ -33,8 +35,8 @@ async function getFile(pathName){
         }, function(err) {
             reject(err);
         })
-    });
-    return promise;
+    })
+    return promise
 }
 async function deleteFile(fileName){
     try{

@@ -18,7 +18,6 @@ async function getIdOeuvre(id){
         await client.connect();
         const db = client.db(bdd);
         let query = {'_id':new ObjectId(id)}
-        console.log(query);
         const collection = db.collection('Oeuvre');
         let oeuvre = await collection.findOne(query);
         if (oeuvre==null) {
@@ -56,7 +55,6 @@ async function getAuthorOeuvre(author){
                     names = oeuvre[i].illustration
                     oeuvre[i].illustration = []
                     for(let j=0;j<names.length;j++){
-                        console.log(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`)
                         oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
                     }
                 }
@@ -85,7 +83,6 @@ async function getAllOeuvre(){
                     names = oeuvre[i].illustration
                     oeuvre[i].illustration = []
                     for(let j=0;j<names.length;j++){
-                        console.log(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`)
                         oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
                     }
                 }
@@ -139,7 +136,6 @@ async function getCatOeuvre(category,subCategory){
                     names = oeuvre[i].illustration
                     oeuvre[i].illustration = []
                     for(let j=0;j<names.length;j++){
-                        console.log(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`)
                         oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
                     }
                 }
@@ -259,7 +255,6 @@ async function addOeuvre(title, description, author, category, subCategory, illu
         }
         const collection = db.collection('Oeuvre');
         let result = await collection.insertOne(newOeuvre);
-        console.log(`New Oeuvre inserted with id ${result.insertedId}`);
         for(let i=0;i<illustration.length;i++){
             minio.uploadFile(`/oeuvre/${author}/${result.insertedId}/${illustration[i].originalname}`,illustration[i])
         }

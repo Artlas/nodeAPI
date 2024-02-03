@@ -30,12 +30,9 @@ apiUp.get('/',(req,resp)=>{
     run()
 })
 apiUp.post('/test',upload.single('illustration'),(req,resp)=>{
-    console.log(req.body)
-    console.log(req.file)
     if(!req.file){
         resp.status(400).json({status:false})
     } else {
-        console.log(`${req.body.url}/${req.file.originalname}`)
         minio.uploadFile(`${req.body.url}/${req.file.originalname}`,req.file)
     }
     resp.status(201).json({status:true})

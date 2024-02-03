@@ -323,7 +323,7 @@ user.post('/unfollowArtist', async (req,resp)=>{
  * @param id in body: id de l'utilisateur à récupérer
  * @return : les informations non confidentielles de l'utilisateur
  */
-user.get('/getUser',async (req,res) => {
+user.post('/getUser',async (req,res) => {
     try {
         if(req.body.id!=null){
             let user = await mongodb.getUser(req.body.id)
@@ -340,6 +340,11 @@ user.get('/getUser',async (req,res) => {
         res.status(500).json({error})
     }
 })
+/**
+ * @useage : récupération de tous les utilisateurs id
+ * @param : aucun
+ * @return : tous les utilisateurs id
+ */
 user.post('/getUsersId',async (req,resp)=>{
     try{
         let users = await mongodb.getUsersId()
