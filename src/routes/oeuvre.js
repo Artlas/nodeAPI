@@ -1,6 +1,9 @@
 const express = require('express')
 const mongodb = require('../Database/oeuvreDB')
 const jwt = require('../auth/jwt')
+const { CopySourceOptions } = require('minio')
+const multer = require('multer');
+const upload = multer();
 const oeuvre = express.Router()
 
 /**
@@ -175,19 +178,21 @@ oeuvre.post('/dislikePost', async (req,resp)=>{
  * @param toSell in body : si l'oeuvre est à vendre
  * @param price in body : prix de l'oeuvre
  */
-oeuvre.post('/addOeuvre',async (req,resp)=>{
+oeuvre.post('/addOeuvre',upload.array('illustration',10),async (req,resp)=>{
+    console.log(req.body)
+    console.log(req.files)
     if(
         req.body.title!=null &&
         req.body.description!=null &&
         req.body.author!=null &&
         req.body.category!=null &&
         req.body.subCategory!=null &&
-        (req.body.illustration!=null ||req.body.video!=null) &&
+        (req.files!=null ||req.body.video!='') &&
         req.body.isMediaTypeImages!=null
     ){
         try{
             // jwt.getToken(req.headers.token)
-            let oeuvre = await mongodb.addOeuvre(req.body.title, req.body.description, req.body.author, req.body.category, req.body.subCategory, req.body.illustration, req.body.video, req.body.isMediaTypeImages, req.body.toSell,req.body.price,req.body.linkToBuy,req.body.canTchat)
+            let oeuvre = await mongodb.addOeuvre(req.body.title, req.body.description, req.body.author, req.body.category, req.body.subCategory, req.files, req.body.video, req.body.isMediaTypeImages,req.body.postDate,req.body.releaseDate ,req.body.toSell,req.body.price,req.body.linkToBuy,req.body.canTchat)
             if(oeuvre){
                 resp.status(201).json(oeuvre)
             }

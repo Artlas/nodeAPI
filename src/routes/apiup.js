@@ -1,6 +1,9 @@
 const express = require('express')
 const mongodb = require('../Database/mongodb')
 const mariadb = require('../mariadb')
+const multer = require('multer');
+const upload = multer();
+const minio = require('../Database/minio')
 
 const apiUp = express.Router()
 
@@ -25,5 +28,16 @@ apiUp.get('/',(req,resp)=>{
         resp.status(201).json(respObj)
     }
     run()
+})
+apiUp.post('/test',upload.single('illustration'),(req,resp)=>{
+    console.log(req.body)
+    console.log(req.file)
+    if(!req.file){
+        resp.status(400).json({status:false})
+    } else {
+        console.log(`${req.body.url}/${req.file.originalname}`)
+        minio.uploadFile(`${req.body.url}/${req.file.originalname}`,req.file)
+    }
+    resp.status(201).json({status:true})
 })
 module.exports = apiUp

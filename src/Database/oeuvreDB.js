@@ -22,6 +22,13 @@ async function getIdOeuvre(id){
         if (oeuvre==null) {
             return {'error':'Oeuvre not found'};
         }else{
+            if(oeuvre.isMediaTypeImages){
+                names = oeuvre.illustration
+                oeuvre.illustration = []
+                for(let j=0;j<names.length;j++){
+                    oeuvre.illustration.push(await minio.getFile(`/oeuvre/${oeuvre.author}/${oeuvre._id}/${names[j]}`))
+                }
+            }
             return oeuvre;
         }
     } catch (err) {
@@ -42,6 +49,16 @@ async function getAuthorOeuvre(author){
         if (oeuvre==null) {
             return {'error':'Oeuvre not found'};
         }else{
+            for (let i=0 ;i<oeuvre.length;i++){
+                if(oeuvre[i].isMediaTypeImages){
+                    names = oeuvre[i].illustration
+                    oeuvre[i].illustration = []
+                    for(let j=0;j<names.length;j++){
+                        console.log(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`)
+                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
+                    }
+                }
+            }
             return oeuvre;
         }
     } catch (err) {
@@ -61,6 +78,16 @@ async function getAllOeuvre(){
         if (oeuvre==null) {
             return {'error':'Oeuvre not found'};
         }else{
+            for (let i=0 ;i<oeuvre.length;i++){
+                if(oeuvre[i].isMediaTypeImages){
+                    names = oeuvre[i].illustration
+                    oeuvre[i].illustration = []
+                    for(let j=0;j<names.length;j++){
+                        console.log(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`)
+                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
+                    }
+                }
+            }
             return oeuvre;
         }
     } catch (err) {
@@ -105,6 +132,16 @@ async function getCatOeuvre(category,subCategory){
         if (oeuvre==null) {
             return {'error':'Oeuvre not found'};
         }else{
+            for (let i=0 ;i<oeuvre.length;i++){
+                if(oeuvre[i].isMediaTypeImages){
+                    names = oeuvre[i].illustration
+                    oeuvre[i].illustration = []
+                    for(let j=0;j<names.length;j++){
+                        console.log(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`)
+                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
+                    }
+                }
+            }
             return oeuvre;
         }
     } catch (err) {
@@ -199,13 +236,14 @@ async function addOeuvre(title, description, author, category, subCategory, illu
             video: video,
             postDate:postDate ,
             releaseDate: releaseDate,
-            isMediaTypeImages: isMediaTypeImages,
+            illustration: illustration.map((elem)=>elem.originalname),
+            isMediaTypeImages: Boolean(isMediaTypeImages),
             author: author,
             likeCount: 0,
-            toSell: toSell,
+            toSell: Boolean(toSell),
             price: price,
             linkToBuy: linkToBuy,
-            canTchat: canTchat,
+            canTchat: Boolean(canTchat),
         };
         const collection2 = db.collection('Art');
         let query = {'name':category}
@@ -220,6 +258,10 @@ async function addOeuvre(title, description, author, category, subCategory, illu
         }
         const collection = db.collection('Oeuvre');
         let result = await collection.insertOne(newOeuvre);
+        console.log(`New Oeuvre inserted with id ${result.insertedId}`);
+        for(let i=0;i<illustration.length;i++){
+            minio.uploadFile(`/oeuvre/${author}/${result.insertedId}/${illustration[i].originalname}`,illustration[i])
+        }
         return result;
     } catch (err) {
         console.log(err)

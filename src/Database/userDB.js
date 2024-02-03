@@ -343,6 +343,33 @@ async function unfollowArtist(userId,artistId){
     }
 }
 
+async function getUser(id){
+    try{
+        await client.connect();
+        const db = client.db(bdd);
+        const collection = db.collection('User');
+        let query = {id: id};
+        let user = await collection.findOne(query);
+        if(user==null){
+            return {error: 'User not found'};
+        }else{
+            let nonConfientialInfo = {
+                id: user.id,
+                image: user.image,
+                folowing: user.folowing,
+                gallery: user.gallery,
+                likedPosts: user.likedPosts
+            };
+            return nonConfientialInfo;
+        }
+    }catch(e){
+        console.log(e);
+        return {error: "An error occured"};
+    }finally{
+        if(client) client.close();
+    }
+}
+
 module.exports = {
     checkUser,
     createUser,
@@ -355,4 +382,5 @@ module.exports = {
     getUserFolowing,
     followArtist,
     unfollowArtist,
+    getUser,
 };

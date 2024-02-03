@@ -17,11 +17,12 @@ const corsObject = cors({
     credentials: true,
 });
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(corsObject);
 
-app.get('/', apiUp);
+app.use('/', apiUp);
+app.options('/*', corsObject);
 app.use('/user', userRouter);
 app.options('/user/*', corsObject);
 app.use('/oeuvre',oeuvreRouter);
