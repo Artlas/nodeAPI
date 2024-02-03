@@ -340,5 +340,18 @@ user.get('/getUser',async (req,res) => {
         res.status(500).json({error})
     }
 })
+user.post('/getUsersId',async (req,resp)=>{
+    try{
+        let users = await mongodb.getUsersId()
+        if(users){
+            resp.status(201).json(users)
+        }
+        else{
+            resp.status(401).json(users)
+        }
+    }catch(error){
+        resp.status(500).json({error})
+    }
+})
 
 module.exports = user;
