@@ -25,12 +25,10 @@ async function getIdOeuvre(id){
             return {'error':'Oeuvre not found'};
         }else{
             if(oeuvre.isMediaTypeImages){
-                if(oeuvre.isMediaTypeImages){
-                    len = oeuvre.illustration
-                    oeuvre.illustration = []
-                    for(let j=0;j<len;j++){
-                        oeuvre.illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre._id}/${j}.png`))
-                    }
+                names = oeuvre.illustration
+                oeuvre.illustration = []
+                for(let j=0;j<names.length;j++){
+                    oeuvre.illustration.push(await minio.getFile(`/oeuvre/${oeuvre.author}/${oeuvre._id}/${names[j]}`))
                 }
             }
             return oeuvre;
@@ -55,10 +53,11 @@ async function getAuthorOeuvre(author){
         }else{
             for (let i=0 ;i<oeuvre.length;i++){
                 if(oeuvre[i].isMediaTypeImages){
-                    len = oeuvre[i].illustration
+                    names = oeuvre[i].illustration
                     oeuvre[i].illustration = []
-                    for(let j=0;j<len;j++){
-                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${j}.png`))
+                    for(let j=0;j<names.length;j++){
+                        console.log(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`)
+                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
                     }
                 }
             }
@@ -83,10 +82,11 @@ async function getAllOeuvre(){
         }else{
             for (let i=0 ;i<oeuvre.length;i++){
                 if(oeuvre[i].isMediaTypeImages){
-                    len = oeuvre[i].illustration
+                    names = oeuvre[i].illustration
                     oeuvre[i].illustration = []
-                    for(let j=0;j<len;j++){
-                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${j}.png`))
+                    for(let j=0;j<names.length;j++){
+                        console.log(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`)
+                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
                     }
                 }
             }
@@ -136,10 +136,11 @@ async function getCatOeuvre(category,subCategory){
         }else{
             for (let i=0 ;i<oeuvre.length;i++){
                 if(oeuvre[i].isMediaTypeImages){
-                    len = oeuvre[i].illustration
+                    names = oeuvre[i].illustration
                     oeuvre[i].illustration = []
-                    for(let j=0;j<len;j++){
-                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${j}.png`))
+                    for(let j=0;j<names.length;j++){
+                        console.log(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`)
+                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
                     }
                 }
             }
@@ -236,14 +237,14 @@ async function addOeuvre(title, description, author, category, subCategory, illu
             video: video,
             postDate:postDate ,
             releaseDate: releaseDate,
-            illustration: illustration.length,
+            illustration: illustration.map((elem)=>elem.originalname),
             isMediaTypeImages: Boolean(isMediaTypeImages),
             author: author,
             likeCount: 0,
-            toSell: toSell,
+            toSell: Boolean(toSell),
             price: price,
             linkToBuy: linkToBuy,
-            canTchat: canTchat,
+            canTchat: Boolean(canTchat),
         };
         const collection2 = db.collection('Art');
         let query = {'name':category}
