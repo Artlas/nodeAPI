@@ -1,4 +1,5 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const minio = require('./minio');
 
 const url = process.env.MONGODBURL ||  "mongodb://localhost:27017/";
 const bdd = 'Artlas'
