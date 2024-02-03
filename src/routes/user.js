@@ -318,5 +318,27 @@ user.post('/unfollowArtist', async (req,resp)=>{
     }
 })
 
+/**
+ * @useage : Des information non confidentielles d'un utilisateur
+ * @param id in body: id de l'utilisateur à récupérer
+ * @return : les informations non confidentielles de l'utilisateur
+ */
+user.get('/getUser',async (req,res) => {
+    try {
+        if(req.body.id!=null){
+            let user = await mongodb.getUser(req.body.id)
+            if(user){
+                res.status(201).json(user)
+            }
+            else{
+                res.status(401).json(user)
+            }
+        } else {
+            res.status(400).json({error: "Bad request"})
+        }
+    } catch (error) {
+        res.status(500).json({error})
+    }
+})
 
 module.exports = user;
