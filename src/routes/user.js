@@ -17,7 +17,7 @@ user.post('/connect', async (req, resp) => {
             let user = await mongodb.checkUser(req.body.mail, req.body.id, req.body.password);
             if (user.mail != null) {
                 let token = jwt.createToken({ userdata: { id: user.id, permission: user.permission } });
-                let user = {
+                let newuser = {
                     token: token,
                     id: user.id,
                     mail: user.mail,
@@ -27,10 +27,15 @@ user.post('/connect', async (req, resp) => {
                     address: user.address,
                     image: user.image,
                     permission: user.permission,
+                    friends: user.friends,
+                    gallery: user.gallery,
+                    lists: user.lists,
+                    likedPosts: user.likedPosts,
+                    favoritCat: user.favoritCat
                 }
-                resp.status(201).json(user);
+                resp.status(201).json(newuser);
             } else {
-                resp.status(401).json(user);
+                resp.status(401).json(newuser);
             }
         } catch (error) {
             console.log(error);
