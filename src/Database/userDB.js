@@ -1,4 +1,5 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const minio = require('./minio');
 
 const url = process.env.MONGODBURL || 'mongodb://localhost:27017/';
 const bdd = 'Artlas';
@@ -60,7 +61,7 @@ async function checkUserExists(email, id) {
     }
 }
 
-async function createUser(id, mail, password, firstName, lastName, birthdate, address) {
+async function createUser(id, mail, password, firstName, lastName, birthdate, address, file, favoritCat) {
     try {
         await client.connect();
         const db = client.db(bdd);
@@ -83,10 +84,9 @@ async function createUser(id, mail, password, firstName, lastName, birthdate, ad
                     lastName: lastName,
                     birthdate: birthdate,
                     address: address,
-                    image: '',
+                    favoritCat: favoritCat,
+                    image: file.originalname,
                     permission: 'user',
-                    friends: [],
-                    waitingFriends: [],
                     folowing: [],
                     folowers: [],
                     gallery: [],
@@ -95,12 +95,13 @@ async function createUser(id, mail, password, firstName, lastName, birthdate, ad
                             listName: 'Favorites',
                             listImage: '',
                             listDescription: 'User\'s favorites posts',
-                            listOeuvre:[]
+                            arts:[]
                         }
                     ],
                     likedPosts:[]
                 };
                 const result = await collection.insertOne(newUser);
+                minio.uploadFile(`/user/${id}/${file.originalname}`,file)
                 return result;
             }
         }
@@ -111,7 +112,7 @@ async function createUser(id, mail, password, firstName, lastName, birthdate, ad
     }
 }
 
-async function updateUser(id, mail, password, firstName, lastName, birthdate, address,image ,permission) {
+async function updateUser(id, mail, password, firstName, lastName, birthdate, address, image,permission) {
     try {
         await client.connect();
         const db = client.db(bdd);
