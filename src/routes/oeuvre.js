@@ -214,7 +214,7 @@ oeuvre.post('/addOeuvre',upload.array('illustration'),async (req,resp)=>{
         console.log(req.body)
         try{
             // jwt.getToken(req.headers.token)
-            let oeuvre = await mongodb.addOeuvre(req.body.title, req.body.description, req.body.author, req.body.category, req.body.subCategory, req.files, req.body.video, req.body.postDate,req.body.releaseDate,req.body.isMediaTypeImages,req.body.toSell,req.body.price,req.body.linkToBuy,req.body.canTchat)
+            let oeuvre = await mongodb.addOeuvre(req.body.title, req.body.description, req.body.author, req.body.category, req.body.subCategory, req.files, req.body.video, req.body.postDate,req.body.releaseDate,req.body.isMediaTypeImages,req.body.toSell,req.body.price,req.body.linkToBuy,req.body.canTchat,req.body.isInGallery)
             if(oeuvre){
                 resp.status(201).json(oeuvre)
             }

@@ -273,7 +273,7 @@ async function dislikePost(postId,userId){
     }
 }
 
-async function addOeuvre(title, description, author, category, subCategory, illustration, video,postDate,releaseDate, isMediaTypeImages,toSell,price,linkToBuy,canTchat){
+async function addOeuvre(title, description, author, category, subCategory, illustration, video,postDate,releaseDate, isMediaTypeImages,toSell,price,linkToBuy,canTchat,isInGallery){
     try {
         await client.connect();
         const db = client.db(bdd);
@@ -298,6 +298,7 @@ async function addOeuvre(title, description, author, category, subCategory, illu
             price: price,
             linkToBuy: linkToBuy,
             canTchat: Boolean(canTchat),
+            isInGallery: Boolean(isInGallery)
         };
         const collection2 = db.collection('Art');
         let query = {'name':category}
