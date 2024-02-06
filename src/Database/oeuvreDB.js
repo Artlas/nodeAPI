@@ -224,7 +224,7 @@ async function likePost(postId,userId){
                 }
                 user.likedPosts.push(postId);
                 oeuvre.likeCount+=1;
-                let query3 = {'_id':postId}
+                let query3 = {'_id':new ObjectId(postId)}
                 const collection3 = db.collection('Oeuvre');
                 let oeuvreModif = await collection3.updateOne(query3,{$set:{likeCount:oeuvre.likeCount}})
                 let userModif =await collection2.updateOne({"_id":user._id},{$set:{likedPosts:user.likedPosts}})
