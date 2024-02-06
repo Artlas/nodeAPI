@@ -11,10 +11,17 @@ const user = express.Router();
  * @param id in body: id de l'utilisateur à connecter (si mail est null)
  * @param password in body: mot de passe de l'utilisateur à connecter
  */
+
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
 user.post('/connect', async (req, resp) => {
     if ((req.body.mail != null || req.body.id != null) && req.body.password != null) {
         try {
-            let user = await mongodb.checkUser(req.body.mail, req.body.id, req.body.password);
+            let user = await mongodb.checkUser(req.body.mail, req.body.id, req.body.password).then((user) => {
+                console.log('User: ', user);
+                sleep(1000);
+            });
             if (user.mail != null) {
                 let token = jwt.createToken({ userdata: { id: user.id, permission: user.permission } });
                 let newuser = {
@@ -85,7 +92,10 @@ user.put('/updatePassword', async (req, resp) => {
 user.post('/check', async (req, resp) => {
     if (req.body.mail != null || req.body.id != null) {
         try {
-            let response = await mongodb.checkUserExists(req.body.mail, req.body.id);
+            let response = await mongodb.checkUserExists(req.body.mail, req.body.id).then((response) => {
+                console.log('Getting checked ', response);
+                sleep(1000);
+            });
             if (response.userExists) {
                 resp.status(200).json({ message: 'User exists' });
             } else {
@@ -111,6 +121,10 @@ user.post('/check', async (req, resp) => {
  * @param address in body: adresse de l'utilisateur à crée
  * @param image in body: image de l'utilisateur à crée
  */
+
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
 user.post('/add', upload.single('image'), async (req, resp) => {
     console.log(req.body);
     console.log(req.file);
@@ -126,17 +140,12 @@ user.post('/add', upload.single('image'), async (req, resp) => {
         req.body.favoritCat != null
     ) {
         try {
-            let user = await mongodb.createUser(
-                req.body.id,
-                req.body.mail,
-                req.body.password,
-                req.body.firstName,
-                req.body.lastName,
-                req.body.birthdate,
-                req.body.address,
-                req.file,
-                req.body.favoritCat
-            );
+            let user = await mongodb
+                .createUser(req.body.id, req.body.mail, req.body.password, req.body.firstName, req.body.lastName, req.body.birthdate, req.body.address, req.file, req.body.favoritCat)
+                .then(async (user) => {
+                    await sleep(1000);
+                    console.log('After creation of user: ', user);
+                });
             if (user) {
                 resp.status(201).json(user);
             } else {
