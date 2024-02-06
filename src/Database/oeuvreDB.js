@@ -29,7 +29,7 @@ async function getIdOeuvre(id){
                     try{
                         oeuvre.illustration.push(await minio.getFile(`/oeuvre/${oeuvre.author}/${oeuvre._id}/${names[j]}`))
                     } catch (err){
-                        console.log(err)
+                        console.log(err) 
                     }
                 }
             }
