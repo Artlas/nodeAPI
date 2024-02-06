@@ -26,7 +26,11 @@ async function getIdOeuvre(id){
                 names = oeuvre.illustration
                 oeuvre.illustration = []
                 for(let j=0;j<names.length;j++){
-                    oeuvre.illustration.push(await minio.getFile(`/oeuvre/${oeuvre.author}/${oeuvre._id}/${names[j]}`))
+                    try{
+                        oeuvre.illustration.push(await minio.getFile(`/oeuvre/${oeuvre.author}/${oeuvre._id}/${names[j]}`))
+                    } catch (err){
+                        console.log(err)
+                    }
                 }
             }
             return oeuvre;
@@ -54,7 +58,11 @@ async function getAuthorOeuvre(author){
                     names = oeuvre[i].illustration
                     oeuvre[i].illustration = []
                     for(let j=0;j<names.length;j++){
-                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
+                        try{
+                            oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
+                        } catch (err){
+                            console.log(err)
+                        }
                     }
                 }
             }
@@ -82,7 +90,11 @@ async function getAllOeuvre(){
                     names = oeuvre[i].illustration
                     oeuvre[i].illustration = []
                     for(let j=0;j<names.length;j++){
-                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
+                        try{
+                            oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
+                        } catch (err){
+                            console.log(err)
+                        }
                     }
                 }
             }
@@ -135,7 +147,11 @@ async function getCatOeuvre(category,subCategory){
                     names = oeuvre[i].illustration
                     oeuvre[i].illustration = []
                     for(let j=0;j<names.length;j++){
-                        oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
+                        try{
+                            oeuvre[i].illustration.push(await minio.getFile(`/oeuvre/${oeuvre[i].author}/${oeuvre[i]._id}/${names[j]}`))
+                        } catch (err){
+                            console.log(err)
+                        }
                     }
                 }
             }
@@ -168,7 +184,11 @@ async function getLikedArt(id){
                     names = post.illustration
                     post.illustration = []
                     for(let j=0;j<names.length;j++){
-                        post.illustration.push(await minio.getFile(`/oeuvre/${post.author}/${post._id}/${names[j]}`))
+                        try{
+                            post.illustration.push(await minio.getFile(`/oeuvre/${post.author}/${post._id}/${names[j]}`))
+                        } catch (err){
+                            console.log(err)
+                        }
                     }
                 }
                 likedPosts.push(post)

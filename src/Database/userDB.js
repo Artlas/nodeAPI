@@ -31,7 +31,11 @@ async function checkUser(email, id, password) {
             if (user.password !== password) {
                 return { error: 'Password does not match' };
             } else {
-                user.image = await minio.getFile(`/user/${user.id}/${user.image}`)
+                try{
+                    user.image = await minio.getFile(`/user/${user.id}/${user.image}`)
+                } catch (e) {
+                    console.log(e);
+                }
                 return user;
             }
         }
@@ -356,7 +360,9 @@ async function getUser(id){
         if(user==null){
             return {error: 'User not found'};
         }else{
-            user.image = await minio.getFile(`/user/${user.id}/${user.image}`)
+            try{
+                user.image = await minio.getFile(`/user/${user.id}/${user.image}`)
+            }catch(e){console.log("No image for this user")}
             let nonConfientialInfo = {
                 id: user.id,
                 folowing: user.folowing,
