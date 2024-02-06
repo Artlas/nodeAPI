@@ -90,7 +90,7 @@ user.post('/check', async (req, resp) => {
             if (response.userExists) {
                 resp.status(200).json({ message: 'User exists' });
             } else {
-                resp.status(404).json({ message: 'User not found' });
+                resp.status(201).json({ message: 'User not found' });
             }
         } catch (error) {
             console.log(error);
