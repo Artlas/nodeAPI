@@ -111,6 +111,29 @@ oeuvre.post('/getCat',async(req,resp)=>{
     }
 })
 /**
+ * @useage : Récupérer les oeuvres likées par un utilisateur
+ * @param token in headers : token de l'utilisateur connecté
+ * @param userId in body : id de l'utilisateur
+ */
+oeuvre.post('/getLikedArt',async(req,resp)=>{
+    if(req.body.userId!=null){
+        try{
+            // jwt.getToken(req.headers.token)
+            let oeuvre = await mongodb.getLikedArt(req.body.userId)
+            if(oeuvre){
+                resp.status(201).json(oeuvre)
+            }
+            else{
+                resp.status(401).json(oeuvre)
+            }
+        }catch(error){
+            resp.status(500).json({error})
+        }
+    }else{
+        resp.status(400).json({error: "Bad request"})
+    }
+})
+/**
  * @useage : Like une oeuvre
  * @param token in headers : token de l'utilisateur connecté
  * @param postId in body : id de l'oeuvre à liker

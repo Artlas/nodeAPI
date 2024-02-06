@@ -150,6 +150,39 @@ async function getCatOeuvre(category,subCategory){
 
 }
 
+async function getLikedArt(id){
+    try {
+        await client.connect();
+        const db = client.db(bdd);
+        let query = {'id':id}
+        const collection = db.collection('User');
+        let user = await collection.findOne(query);
+        if (user==null) {
+            return {'error':'User not found'};
+        }else{
+            let likedPosts = []
+            for(let i=0;i<user.likedPosts.length;i++){
+                query = {'_id':new ObjectId(user.likedPosts[i])}
+                let post = await db.collection("Oeuvre").findOne(query)
+                if(post.isMediaTypeImages){
+                    names = post.illustration
+                    post.illustration = []
+                    for(let j=0;j<names.length;j++){
+                        post.illustration.push(await minio.getFile(`/oeuvre/${post.author}/${post._id}/${names[j]}`))
+                    }
+                }
+                likedPosts.push(post)
+            }
+            return likedPosts;
+        }
+    } catch (err) {
+        console.log(err)
+    } finally {
+        if (client) client.close();
+    }
+}
+
+
 async function likePost(postId,userId){
     try {
         await client.connect();
@@ -444,6 +477,7 @@ module.exports = {
     getAllIdOeuvre,
     getCatOeuvre,
     getAuthorOeuvre,
+    getLikedArt,
     likePost,
     dislikePost,
     addOeuvre,
