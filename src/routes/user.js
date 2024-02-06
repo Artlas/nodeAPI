@@ -18,10 +18,7 @@ function sleep(ms) {
 user.post('/connect', async (req, resp) => {
     if ((req.body.mail != null || req.body.id != null) && req.body.password != null) {
         try {
-            let user = await mongodb.checkUser(req.body.mail, req.body.id, req.body.password).then((user) => {
-                console.log('User: ', user);
-                // sleep(1000);
-            });
+            let user = await mongodb.checkUser(req.body.mail, req.body.id, req.body.password);
             if (user.mail != null) {
                 let token = jwt.createToken({ userdata: { id: user.id, permission: user.permission } });
                 let newuser = {
