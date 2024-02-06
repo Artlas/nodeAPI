@@ -122,7 +122,7 @@ user.post('/add', upload.single('image'), async (req, resp) => {
         req.body.lastName != null &&
         req.body.birthdate != null &&
         req.body.address != null &&
-        //req.file != null &&
+        req.file != null &&
         req.body.favoritCat != null
     ) {
         try {
