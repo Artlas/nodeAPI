@@ -30,7 +30,7 @@ async function checkUser(email, id, password) {
             if (user.password !== password) {
                 return { error: 'Password does not match' };
             } else {
-                user.image = await minio.getFile(`user/${user.id}/${user.image}`)
+                user.image = await minio.getFile(`/user/${user.id}/${user.image}`)
                 return user;
             }
         }
