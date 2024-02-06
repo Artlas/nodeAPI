@@ -257,6 +257,10 @@ async function addOeuvre(title, description, author, category, subCategory, illu
     try {
         await client.connect();
         const db = client.db(bdd);
+        if(toSell==null) toSell=false;
+        if(price==null) price=0;
+        if(linkToBuy==null) linkToBuy="";
+        if(canTchat==null) canTchat=false;
         let newOeuvre = {
             title: title,
             description: description,
