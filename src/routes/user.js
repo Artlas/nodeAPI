@@ -20,7 +20,7 @@ user.post('/connect', async (req, resp) => {
         try {
             let user = await mongodb.checkUser(req.body.mail, req.body.id, req.body.password).then((user) => {
                 console.log('User: ', user);
-                sleep(1000);
+                // sleep(1000);
             });
             if (user.mail != null) {
                 let token = jwt.createToken({ userdata: { id: user.id, permission: user.permission } });
