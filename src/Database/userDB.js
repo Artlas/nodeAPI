@@ -24,9 +24,10 @@ async function checkUser(email, id, password) {
         }
         const collection = db.collection('User');
         let user = await collection.findOne(query);
-        if (user == null) {
+        console.log(user);
+        if(user == null) {
             return { error: 'User not found' };
-        } else {
+        }else {
             if (user.password !== password) {
                 return { error: 'Password does not match' };
             } else {

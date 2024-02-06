@@ -35,7 +35,7 @@ user.post('/connect', async (req, resp) => {
                 };
                 resp.status(201).json(newuser);
             } else {
-                resp.status(401).json(newuser);
+                resp.status(401).json(user);
             }
         } catch (error) {
             console.log(error);
