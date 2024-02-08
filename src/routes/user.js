@@ -12,9 +12,7 @@ const user = express.Router();
  * @param password in body: mot de passe de l'utilisateur à connecter
  */
 
-function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
+
 user.post('/connect', async (req, resp) => {
     if ((req.body.mail != null || req.body.id != null) && req.body.password != null) {
         try {
@@ -89,10 +87,7 @@ user.put('/updatePassword', async (req, resp) => {
 user.post('/check', async (req, resp) => {
     if (req.body.mail != null || req.body.id != null) {
         try {
-            let response = await mongodb.checkUserExists(req.body.mail, req.body.id).then((response) => {
-                console.log('Getting checked ', response);
-                sleep(1000);
-            });
+            let response = await mongodb.checkUserExists(req.body.mail, req.body.id)
             if (response.userExists) {
                 resp.status(200).json({ message: 'User exists' });
             } else {
@@ -119,9 +114,6 @@ user.post('/check', async (req, resp) => {
  * @param image in body: image de l'utilisateur à crée
  */
 
-function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
 user.post('/add', upload.single('image'), async (req, resp) => {
     console.log(req.body);
     console.log(req.file);
