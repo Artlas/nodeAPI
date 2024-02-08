@@ -137,12 +137,7 @@ user.post('/add', upload.single('image'), async (req, resp) => {
         req.body.favoritCat != null
     ) {
         try {
-            let user = await mongodb
-                .createUser(req.body.id, req.body.mail, req.body.password, req.body.firstName, req.body.lastName, req.body.birthdate, req.body.address, req.file, req.body.favoritCat)
-                .then(async (user) => {
-                    await sleep(1000);
-                    console.log('After creation of user: ', user);
-                });
+            let user = await mongodb.createUser(req.body.id, req.body.mail, req.body.password, req.body.firstName, req.body.lastName, req.body.birthdate, req.body.address, req.file, req.body.favoritCat)
             if (user) {
                 resp.status(201).json(user);
             } else {
