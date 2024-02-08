@@ -29,8 +29,6 @@ app.use('/oeuvre',oeuvreRouter);
 app.options('/oeuvre/*', corsObject);
 app.use('/category',categoryRouter);
 app.options('/category/*', corsObject);
-let bool = "false"
-console.log(bool.toLowerCase()==="true")
 
 
 app.get('/authorized', function (req, res) {
