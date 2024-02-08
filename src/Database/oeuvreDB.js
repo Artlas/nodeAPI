@@ -291,14 +291,14 @@ async function addOeuvre(title, description, author, category, subCategory, illu
             postDate:new Date(postDate),
             releaseDate: new Date(releaseDate),
             illustration: illustration.map((elem)=>elem.originalname),
-            isMediaTypeImages: Boolean(isMediaTypeImages),
+            isMediaTypeImages: isMediaTypeImages.toLowerCase()==="true" ? true : false ,
             author: author,
             likeCount: 0,
-            toSell: Boolean(toSell),
+            toSell: toSell.toLowerCase()==="true" ? true : false,
             price: price,
             linkToBuy: linkToBuy,
-            canTchat: Boolean(canTchat),
-            isInGallery: Boolean(isInGallery)
+            canTchat: canTchat.toLowerCase()==="true" ? true : false,
+            isInGallery: isInGallery.toLowerCase()==="true" ? true : false,
         };
         const collection2 = db.collection('Art');
         let query = {'name':category}
