@@ -270,6 +270,21 @@ async function getUserFolowing(userId){
         if(user.error){
             return {error: "User not found"};
         }
+        for(let i=0;i<user.folowing.length;i++){
+            let artist = await collection.findOne({id: user.folowing[i]});
+            try{
+                artist.image = await minio.getFile(`/user/${artist.id}/${artist.image}`)
+            }catch(e){console.log("No image for this user")}
+            let nonConfientialInfo = {
+                id: artist.id,
+                folowing: artist.folowing,
+                gallery: artist.gallery,
+                likedPosts: artist.likedPosts,
+                favoritCat: artist.favoritCat,
+                image: artist.image
+            };
+            user.folowing[i] = nonConfientialInfo;
+        }
         return user.folowing;
     }catch(e){
         console.log(e);
