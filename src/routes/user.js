@@ -29,7 +29,7 @@ user.post('/connect', async (req, resp) => {
                     address: user.address,
                     image: user.image,
                     permission: user.permission,
-                    friends: user.friends,
+                    folowing: user.folowing,
                     gallery: user.gallery,
                     lists: user.lists,
                     likedPosts: user.likedPosts,
